@@ -2,7 +2,7 @@
 Web-Based Point of Sales and Order Tracking System for ALA Glass & Aluminum
 
 ## Project Description
-A client-side POS and order tracking web prototype designed to handle dimension-based glass and aluminum order calculations, inventory tracking, and payment processing.
+A client-side POS and order tracking web prototype designed to handle dimension-based glass and aluminum order calculations, Order Process and payment processing.
 
 ## Team Members
 * John Lester Enguerra 
