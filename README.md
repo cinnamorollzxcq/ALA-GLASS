@@ -9,6 +9,8 @@ A client-side POS and order tracking web prototype designed to handle dimension-
 * Emmanuel Manuntag
 * Paul Joseph Lagrana
 * Alvin Pangilinan
+* Johnrhain Adriano
+* Erwin JImenez
 
 
 ## Technology Used
