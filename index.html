@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALA Glass & Aluminum - POS & Order Tracker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Sidebar Component -->
+  <aside class="sidebar">
+    <div class="logo">
+      <h2>ALA Glass & Aluminum</h2>
+      <p>Fabrication & POS Unit</p>
+    </div>
+    <nav class="nav-links">
+      <button class="nav-btn active" onclick="showPage('dashboard')">Dashboard</button>
+      <button class="nav-btn" onclick="showPage('calculator')">Sales Calculator</button>
+      <button class="nav-btn" onclick="showPage('summary')">Order Summary</button>
+    </nav>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="main-content">
+    <header class="top-bar">
+      <input type="text" placeholder="Search orders, materials..." class="search-input">
+      <div class="user-profile">Staff Account</div>
+    </header>
+
+    <!-- Homepage View -->
+    <section id="dashboard" class="page-view active">
+      <h2>Main Dashboard</h2>
+      
+      <!-- Reusable Card Component Grid -->
+      <div class="metrics-grid">
+        <div class="card">
+          <h3>Today's Revenue</h3>
+          <p class="metric-value">₱ 0.00</p>
+        </div>
+        <div class="card">
+          <h3>Active Fabrication Orders</h3>
+          <p class="metric-value">02</p>
+        </div>
+        <div class="card">
+          <h3>Monthly Target Progress</h3>
+          <p class="metric-value">75%</p>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <h3>Recent Orders</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>ORDER ID</th>
+              <th>CLIENT</th>
+              <th>ITEM DESCRIPTION</th>
+              <th>STATUS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>#1001</td>
+              <td>Juan Cruz</td>
+              <td>Sliding Glass Door (6mm)</td>
+              <td><span class="badge badge-installing">Installing</span></td>
+            </tr>
+            <tr>
+              <td>#1002</td>
+              <td>Maria Santos</td>
+              <td>Aluminum Window Frame</td>
+              <td><span class="badge badge-cutting">Cutting</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Sales Calculator View -->
+    <section id="calculator" class="page-view">
+      <h2>Embedded Dimensions Calculator</h2>
+      <div class="calc-container">
+        <div class="calc-form">
+          <label>Width (mm)</label>
+          <input type="number" id="calc-width" placeholder="e.g. 1200">
+          <label>Height (mm)</label>
+          <input type="number" id="calc-height" placeholder="e.g. 1500">
+          <button class="btn-primary" onclick="calculateCost()">Calculate Estimated Cost</button>
+        </div>
+        <div class="calc-result">
+          <h3>Estimated Price</h3>
+          <p id="total-price-display">₱ 0.00</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Order Summary View -->
+    <section id="summary" class="page-view">
+      <h2>Order Summary & Checkout</h2>
+      <p>View balances, items, and printable receipt data.</p>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
