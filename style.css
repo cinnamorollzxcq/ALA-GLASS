@@ -28,10 +28,44 @@ body { display: flex; min-height: 100vh; background-color: #f4f6f9; }
 .metric-value { font-size: 24px; font-weight: bold; color: #1e3a8a; margin-top: 10px; }
 
 /* Calculator UI */
-.calc-container { display: flex; gap: 30px; background: white; padding: 20px; border-radius: 8px; margin-top: 20px; }
-.calc-form { display: flex; flex-direction: column; gap: 10px; width: 300px; }
-.calc-form input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
-.btn-primary { padding: 10px; background: #1e3a8a; color: white; border: none; border-radius: 4px; cursor: pointer; }
+.calc-container { 
+  display: flex; 
+  gap: 30px; 
+  background: white; 
+  padding: 20px; 
+  border-radius: 8px; 
+  margin-top: 20px; 
+}
+
+.calc-form { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 10px; 
+  width: 300px; 
+}
+
+/* Form Inputs Styling */
+.calc-form input,
+#calc-material { 
+  width: 100%;
+  padding: 8px 12px; 
+  border: 1px solid #ccc; 
+  border-radius: 4px; 
+  background-color: #ffffff;
+  color: #333333;
+}
+
+/* Primary Button Styling */
+.btn-primary { 
+  padding: 10px; 
+  background: #1e3a8a; 
+  color: white; 
+  border: none; 
+  border-radius: 4px; 
+  cursor: pointer; 
+  width: 100%;
+  margin-top: 10px;
+}
 
 /* Reusable Table Component */
 .table-container { background: white; padding: 20px; border-radius: 8px; margin-top: 20px; }
