@@ -18,6 +18,13 @@
       <button class="nav-btn" onclick="showPage('calculator')">Sales Calculator</button>
       <button class="nav-btn" onclick="showPage('summary')">Order Summary</button>
     </nav>
+
+    <footer class="sidebar-footer">
+  <button class="nav-btn" onclick="showPage('settings')"> Settings</button>
+  <button class="nav-btn logout-btn" onclick="logout()"> Log Out</button>
+  <div class="version-tag">v1.0.0</div>
+
+</footer>
   </aside>
 
   <!-- Main Content Area -->
@@ -27,9 +34,9 @@
       <div class="user-profile">Staff Account</div>
     </header>
 
-    <!-- Homepage View -->
+    <!-- Landing Page/Dashboard -->
     <section id="dashboard" class="page-view active">
-      <h2>Main Dashboard</h2>
+      <h2 class="Welcome-title">Welcome Back, Staff Name</h2>
       
       <!-- Reusable Card Component Grid -->
       <div class="metrics-grid">
@@ -47,40 +54,69 @@
         </div>
       </div>
 
-      <div class="table-container">
-        <h3>Recent Orders</h3>
-        <table>
-          <thead>
+        <div class="search-order">
+        <input type="Type order" placeholder=" Search Orders..." class="serts">
+      </div>
+
+      </div>
+
+      <div class="pending-orders-container">
+        <h3>Pending Orders</h3>
+  
+      <table class="pill-table">
+             <thead>
+              <tr>
+                    <th>ORDER ID</th>
+                    <th>CLIENT</th>
+                    <th>PRODUCTS</th>
+                    <th>STATUS</th>
+                </tr>
+             </thead>
+         <tbody>
+              <tr>
+                 <td>#1001</td>
+                 <td>Juan Cruz</td>
+                 <td>Sliding Glass Door</td>
+                 <td><span class="badge badge-installing">Installing</span></td>
+              </tr>
+
+             <tr>
+                 <td>#1002</td>
+                 <td>Maria Santos</td>
+                  <td>Aluminum Frame</td>
+                  <td><span class="badge badge-cutting">Cutting</span></td>
+             </tr>
+
+             <tr>
+               <td>#1003</td>
+               <td>Pedro Penduko</td>
+               <td>Tempered Glass</td>
+               <td><span class="badge badge-pickup">Pick up</span></td>
+             </tr>
+
             <tr>
-              <th>ORDER ID</th>
-              <th>CLIENT</th>
-              <th>ITEM DESCRIPTION</th>
-              <th>STATUS</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>#1001</td>
-              <td>Juan Cruz</td>
-              <td>Sliding Glass Door (6mm)</td>
-              <td><span class="badge badge-installing">Installing</span></td>
-            </tr>
-            <tr>
-              <td>#1002</td>
-              <td>Maria Santos</td>
-              <td>Aluminum Window Frame</td>
-              <td><span class="badge badge-cutting">Cutting</span></td>
-            </tr>
+              <td>#1004</td>
+              <td>Ana Reyes</td>
+             <td>SD-50 Frame</td>
+              <td><span class="badge badge-done">Done</span></td>
+             </tr>
           </tbody>
-        </table>
+       </table>
+
+  <div class="view-all-wrapper">
+    <button class="btn-view-all" onclick="openModal('orderTrackerModal')">View all</button>
+  </div>
+</div>
+
       </div>
     </section>
 
-    <!-- Sales Calculator View -->
+    <!-- Sales Calculator Page -->
     <section id="calculator" class="page-view">
-      <h2>Embedded Dimensions Calculator</h2>
+      
       <div class="calc-container">
         <div class="calc-form">
+          <h2>Calculator</h2>
           <label>Width (mm)</label>
           <input type="number" id="calc-width" placeholder="e.g. 1200">
 
@@ -95,22 +131,190 @@
 
           <button class="btn-primary" onclick="calculateCost()">Calculate Estimated Cost</button> 
         </div>
+      </div>
+
+        <div class="Todays-sale">
+          <h2>Todays Sale</h2>
+          <h2>₱ 20,000</h2>
+        </div>
 
         
-        <div class="calc-result">
-          <h3>Estimated Price</h3>
-          <p id="total-price-display">₱ 0.00</p>
+        <div class="current-detail">
+            <h2>Current order details</h2>
+              <div class="filter">
+                <input type="text" placeholder="Search Items...">
+
+              </div>
+        </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th>Dimensity</th>
+                <th>Qty</th>
+                <th>Price</th>
+              </tr>
+            </thead>
+            
+            <tbody>
+              <tr>
+                <td>
+              <strong>Tempered Glass</strong><br>
+              <small>Glass panel</small>
+            </td>
+            <td>1300×2400 mm</td>
+            <td>4</td>
+            <td>₱ 6,080.00</td>
+            
+          </tr>
+          <tr>
+            <td><strong>Aluminum</strong></td>
+            <td>1200×2100 mm</td>
+            <td>10</td>
+            <td>₱ 10,000.00</td>
+           
+          </tr>
+          <tr>
+            <td><strong>SD-50 Frame</strong></td>
+            <td>6000 mm</td>
+            <td>3</td>
+            <td>₱ 3,000.00</td>
+            
+          </tr>
+          <tr>
+            <td><strong>Labor</strong></td>
+            <td>-</td>
+            <td>3</td>
+            <td>₱ 1,000.00</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="total_compute">
+            <h2>Total Computation</h2>
+            <p>P 20,470.00</p>
+
+          </div>
+
+          <button>calculate</button>
+          <button>save order</button>
+
+
         </div>
       </div>
     </section>
 
-    <!-- Order Summary View -->
+    <!-- Summary Page -->
     <section id="summary" class="page-view">
-      <h2>Order Summary & Checkout</h2>
-      <p>View balances, items, and printable receipt data.</p>
+    <div class="cust-container">
+
+      <div class="Customer-info">
+        <h2>Customer Information</h2>
+        <label>Customer Name</label>
+        <input type="text" id="cust-name" placeholder="Your Name...">
+
+        <label>Contact number</label>
+        <input type="number" id="cust-number" placeholder="09xxx">
+
+        <label>Full Address</label>
+        <input type="text" id="cust-address" placeholder="Your Address...">
+      </div>
+    </div>
+      
+      <div class="current-details">
+          <div>
+            <h2>Current order details</h3>
+              <div class="filter">
+                <input type="text" placeholder="Search Items...">
+
+              </div>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th>Dimensity</th>
+                <th>Qty</th>
+                <th>Price</th>
+              </tr>
+            </thead>
+            
+            <tbody>
+          <tr>
+                <td>
+              <strong>Tempered Glass</strong><br>
+              <small>Glass panel</small>
+                </td>
+            <td>1300×2400 mm</td>
+            <td>4</td>
+            <td>₱ 6,080.00</td>
+          </tr>
+
+          <tr>
+            <td><strong>Aluminum</strong></td>
+            <td>1200×2100 mm</td>
+            <td>10</td>
+            <td>₱ 10,000.00</td>
+           
+          </tr>
+          <tr>
+            <td><strong>SD-50 Frame</strong></td>
+            <td>6000 mm</td>
+            <td>3</td>
+            <td>₱ 3,000.00</td>
+            
+          </tr>
+          <tr>
+            <td><strong>Labor</strong></td>
+            <td>-</td>
+            <td>3</td>
+            <td>₱ 1,000.00</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="total_compute">
+            <h2>Total Computation</h2>
+            <p>P 20,470.00</p>
+
+          </div>
+
+          <button>calculate</button>
+          <button>save order</button>
+    </div>
+
+    <div calss="unpaid-orders">
+      <h2>Unpaid Orders</h2>
+      <div class="order-search">
+        <input type="text" placeholder="Search Order...">
+      </div>
+
+      <table>
+        <thead>
+          <th>Name</th>
+          <th>Order ID</th>
+          <th>Remaining Balance</th>
+          <th>Order Date</th>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>
+              <button>Pay</button>
+              <button>Pay</button>
+              <button>Pay</button>
+            </td>
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>  
     </section>
   </main>
-
   <script src="./script.js"></script>
 </body>
 </html>
