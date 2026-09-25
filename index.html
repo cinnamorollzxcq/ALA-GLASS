@@ -10,29 +10,37 @@
     <!-- Sidebar Component -->
     <aside class="sidebar">
       <div class="logo">
-        <h2>
-          ALA Glass & <br />
-          Aluminum
-        </h2>
-        <p>Fabrication & POS Unit</p>
+        <img src="assets/alalogo.png" alt="ala glass logo" class="ala-logo" />
+        <div class="logo-text">
+          <h2>ALA Glass & Aluminum</h2>
+          <p>Fabrication & POS Unit</p>
+        </div>
       </div>
       <nav class="nav-links">
-        <button class="nav-btn active" onclick="showPage('dashboard')">
+        <button class="nav-btn active" onclick="showPage('dashboard', event)">
           Dashboard
         </button>
-        <button class="nav-btn" onclick="showPage('calculator')">
+        <button class="nav-btn" onclick="showPage('calculator', event)">
           Sales Calculator
         </button>
-        <button class="nav-btn" onclick="showPage('summary')">
+        <button class="nav-btn" onclick="showPage('summary', event)">
           Order Summary
         </button>
       </nav>
 
       <footer class="sidebar-footer">
         <button class="nav-btn setting-btn" onclick="showPage('settings')">
+          <img
+            src="assets/settings.svg"
+            alt="settings icon"
+            class="setting-icon"
+          />
           Settings
         </button>
-        <button class="nav-btn logout-btn" onclick="logout()">Log Out</button>
+        <button class="nav-btn logout-btn" onclick="logout()">
+          <img src="assets/log-out.svg" alt="log out" class="logout-icon" />
+          Log Out
+        </button>
       </footer>
     </aside>
 
@@ -46,12 +54,30 @@
             class="search-input"
           />
         </div>
-        <div class="user-profile">Staff Account</div>
+
+        <div class="user-profile">
+          <div class="notif-help">
+            <img src="assets/bell.svg" alt="Notification" class="notif-icon" />
+            <img
+              src="assets/circle-question-mark.svg"
+              alt="help"
+              class="help-icon"
+            />
+
+            <span class="divider"></span>
+          </div>
+          <span class="username">username/profile</span>
+          <img
+            src="assets/circle-user.svg"
+            alt="user profile"
+            class="user-icon"
+          />
+        </div>
       </header>
 
       <!-- Landing Page/Dashboard -->
       <section id="dashboard" class="page-view active">
-        <h2 class="Welcome-title">Welcome Back, Staff Name</h2>
+        <h2 class="welcome-title">Welcome Back, Staff Name</h2>
 
         <!-- Reusable Card Component Grid -->
         <div class="metrics-grid">
@@ -70,7 +96,7 @@
         </div>
 
         <div class="search-order">
-          <input type="Text" placeholder=" Search Orders..." class="serts" />
+          <input type="Text" placeholder=" Search Orders..." />
         </div>
 
         <div class="pending-orders-container">
@@ -197,35 +223,57 @@
           <div class="calc-container">
             <div class="calc-form">
               <h2>Calculator</h2>
-              <label>Width (mm)</label>
-              <input type="number" id="calc-width" placeholder="e.g. 1200" />
+              <div class="width-height">
+                <div>
+                  <label>Width (mm)</label>
+                  <input
+                    type="number"
+                    id="calc-width"
+                    placeholder="e.g. 1200"
+                  />
+                </div>
 
-              <label>Height (mm)</label>
-              <input type="number" id="calc-height" placeholder="e.g. 1500" />
+                <div>
+                  <label>Height (mm)</label>
+                  <input
+                    type="number"
+                    id="calc-height"
+                    placeholder="e.g. 1500"
+                  />
+                </div>
+              </div>
+              <label>Product Type</label>
+              <div class="product-type">
+                <select class="calc-select">
+                  <option>Select Product...</option>
+                  <option>Glass Windows</option>
+                  <option>Chair</option>
+                  <option>Cabinet</option>
+                  <option>Windows</option>
+                </select>
+                <input type="number" placeholder="0.00" />
+              </div>
 
               <label>Material type</label>
-              <input
-                type="text"
-                id="calc-material"
-                placeholder="e.g aluminum"
-              />
+              <select class="material-select">
+                <option>Select Material...</option>
+                <option>Aluminum</option>
+                <option>Stainless</option>
+                <option>Fiber Glass</option>
+                <option>Metal</option>
+              </select>
 
-              <label>Product Type</label>
-              <input
-                type="text"
-                id="calc-product"
-                placeholder="e.g door, window"
-              />
-
-              <button class="btn-primary" onclick="calculateCost()">
-                Calculate Estimated Cost
-              </button>
+              <button class="btn-calculate">Add to Current Order</button>
+            </div>
+            <div class="Todays-sale">
+              <h2>Today's Sale</h2>
+              <p>₱ 20,000</p>
             </div>
           </div>
 
           <!-- RIGHT COLUMN: Current Order Details -->
-          <div class="order-details">
-            <div class="current-detail">
+          <div class="current-details">
+            <div class="current-header">
               <h2>Current order details</h2>
               <div class="filter">
                 <input type="text" placeholder="Search Items..." />
@@ -250,6 +298,15 @@
                   <td>1300×2400 mm</td>
                   <td>4</td>
                   <td>₱ 6,080.00</td>
+                  <td>
+                    <button class="delete-btn">
+                      <img
+                        src="assets/trash.svg"
+                        alt="delete button"
+                        class="delete-icon"
+                      />
+                    </button>
+                  </td>
                 </tr>
                 <tr>
                   <td><strong>Aluminum</strong></td>
@@ -272,19 +329,29 @@
               </tbody>
             </table>
 
-            <div class="total-container">
-              <h2>Total Computation</h2>
-              <p>P 20,470.00</p>
+            <div class="current-footer">
+              <div class="total-container">
+                <span class="total-span">Total Computation</span>
+                <div class="logo-computation">
+                  <div>
+                    <img
+                      src="assets/philippine-peso (1).svg"
+                      class="peso-logo"
+                    />
+                  </div>
+
+                  <div class="h2p-container">
+                    <h2>20,470.00</h2>
+                    <p>Includes 12% VAT. Valid for 30 days.</p>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <button class="calculate-btn">Calculate</button>
+                <button class="save-btn">Save Order</button>
+              </div>
             </div>
-
-            <button class="print-btn">Calculate</button>
-            <button class="edit-btn">Save Order</button>
           </div>
-        </div>
-
-        <div class="Todays-sale">
-          <h2>Today's Sale</h2>
-          <p>₱ 20,000</p>
         </div>
       </section>
 
@@ -292,7 +359,7 @@
       <section id="summary" class="page-view">
         <div class="summary-container">
           <div class="customer-container">
-            <div class="Customer-info">
+            <div class="customer-info">
               <h2>Customer Information</h2>
               <label>Customer Name</label>
               <input type="text" id="cust-name" placeholder="Your Name..." />
@@ -306,15 +373,16 @@
                 id="cust-address"
                 placeholder="Your Address..."
               />
-
+            </div>
+            <div class="confirm-button">
               <button class="confirm-btn">Confirm</button>
             </div>
           </div>
 
-          <div class="order-details-summary">
-            <div class="current-detail-summary">
+          <div class="current-details">
+            <div class="current-header">
               <h2>Current order details</h2>
-              <div class="filter-summary">
+              <div class="filter">
                 <input type="text" placeholder="Search Items..." />
               </div>
             </div>
@@ -337,6 +405,15 @@
                   <td>1300×2400 mm</td>
                   <td>4</td>
                   <td>₱ 6,080.00</td>
+                  <td>
+                    <button class="delete-btn">
+                      <img
+                        src="assets/trash.svg"
+                        alt="delete button"
+                        class="delete-icon"
+                      />
+                    </button>
+                  </td>
                 </tr>
                 <tr>
                   <td><strong>Aluminum</strong></td>
@@ -359,50 +436,138 @@
               </tbody>
             </table>
 
-            <div class="total-container">
-              <h2>Total Computation</h2>
-              <p>P 20,470.00</p>
-            </div>
+            <div class="current-footer">
+              <div class="total-container">
+                <span class="total-span">Total Computation</span>
+                <div class="logo-computation">
+                  <div>
+                    <img
+                      src="assets/philippine-peso (1).svg"
+                      class="peso-logo"
+                    />
+                  </div>
 
-            <button class="print-btn">Print Button</button>
-            <button class="edit-btn">Edit Order</button>
+                  <div class="h2p-container">
+                    <h2>20,470.00</h2>
+                    <p>Includes 12% VAT. Valid for 30 days.</p>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <button class="print-btn">Print Receipt</button>
+                <button class="edit-btn">Edit Order</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="unpaid-orders">
+          <h2>Unpaid Orders</h2>
+          <div class="order-search">
+            <input type="text" placeholder="Search Order..." />
           </div>
 
-          <div class="unpaid-orders">
-            <h2>Unpaid Orders</h2>
-            <div class="order-search">
-              <input type="text" placeholder="Search Order..." />
+          <table class="unpaid-tables">
+            <thead>
+              <tr>
+                <th><span class="th-cell"></span></th>
+                <th><span class="th-cell">Name</span></th>
+                <th><span class="th-cell">Order ID</span></th>
+                <th><span class="th-cell">Remaining Balance</span></th>
+                <th><span class="th-cell">Order Date</span></th>
+                <th><span class="th-cell"></span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>x</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><button class="pay-btn">PAY</button></td>
+              </tr>
+
+              <tr>
+                <td>x</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><button class="pay-btn">PAY</button></td>
+              </tr>
+
+              <tr>
+                <td>x</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><button class="pay-btn">PAY</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Receipt Modal -->
+        <div id="receiptModal" class="modal-overlay">
+          <div class="receipt-modal-container">
+            <div class="receipt-card">
+              <div class="receipt-header">
+                <div class="receipt-logo"><span>ALA</span></div>
+                <h3>ALA Glass &amp; Aluminum</h3>
+                <p>San Rafael, Bulacan</p>
+              </div>
+
+              <div class="receipt-info">
+                <div class="info-row">
+                  <span>Order ID</span><span>#000</span>
+                </div>
+                <div class="info-row">
+                  <span>Date</span><span>00/00/0000</span>
+                </div>
+                <div class="info-row">
+                  <span>Customer</span><span>Name</span>
+                </div>
+              </div>
+
+              <div class="receipt-items-lines">
+                <div class="receipt-line-group">
+                  <div class="line thick"></div>
+                  <div class="line thin"></div>
+                </div>
+                <div class="receipt-line-group">
+                  <div class="line thick"></div>
+                  <div class="line thin"></div>
+                </div>
+              </div>
+
+              <div class="receipt-summary">
+                <div class="summary-row">
+                  <span>Subtotal</span><span>₱ 0,000.00</span>
+                </div>
+                <div class="summary-row">
+                  <span>VAT (12%)</span><span>₱ 000.00</span>
+                </div>
+                <div class="summary-row">
+                  <span>Down Payment</span><span>₱ 0,000.00</span>
+                </div>
+                <div class="summary-row total-row">
+                  <span>Balance Due</span><span>₱ 0,000.00</span>
+                </div>
+              </div>
+
+              <p class="receipt-footer-text">Thank you for your order!</p>
             </div>
 
-            <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Order ID</th>
-                  <th>Remaining Balance</th>
-                  <th>Order Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>
-                    <button class="pay-btn">Pay</button>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>
-                    <button class="pay-btn">Pay</button>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>
-                    <button class="pay-btn">Pay</button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <div class="receipt-actions">
+              <button id="closeReceiptBtn" class="btn-back">
+                ← Back to Order
+              </button>
+              <button id="confirmPrintBtn" class="btn-print">
+                Print Receipt
+              </button>
+            </div>
           </div>
         </div>
       </section>

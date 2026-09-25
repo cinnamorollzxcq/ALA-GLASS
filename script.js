@@ -52,3 +52,41 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
+//-----Print Button------
+document.addEventListener("DOMContentLoaded", () => {
+  const printBtn = document.querySelector(".print-btn");
+  const receiptModal = document.getElementById("receiptModal");
+  const closeReceiptBtn = document.getElementById("closeReceiptBtn");
+  const confirmPrintBtn = document.getElementById("confirmPrintBtn");
+
+  // Show modal on Print Receipt button click
+  if (printBtn) {
+    printBtn.addEventListener("click", () => {
+      receiptModal.classList.add("active");
+    });
+  }
+
+  // Hide modal on Back to Order button click
+  if (closeReceiptBtn) {
+    closeReceiptBtn.addEventListener("click", () => {
+      receiptModal.classList.remove("active");
+    });
+  }
+
+  // Hide modal on clicking background overlay
+  if (receiptModal) {
+    receiptModal.addEventListener("click", (e) => {
+      if (e.target === receiptModal) {
+        receiptModal.classList.remove("active");
+      }
+    });
+  }
+
+  // Launch browser printer interface
+  if (confirmPrintBtn) {
+    confirmPrintBtn.addEventListener("click", () => {
+      window.print();
+    });
+  }
+});
