@@ -231,8 +231,8 @@
                 <th>ORDER ID</th>
                 <th>CLIENT</th>
                 <th>PRODUCTS</th>
-                <th>STATUS</th>
                 <th>ORDER DATE</th>
+                <th>STATUS</th>
               </tr>
             </thead>
             <tbody>
@@ -369,6 +369,7 @@
                   <option>Select Product...</option>
                   <option>Glass Windows</option>
                   <option>Chair</option>
+                  <option>Dinner Table</option>
                   <option>Sliding Door</option>
                   <option>Windows</option>
                 </select>
@@ -380,9 +381,11 @@
                 <option>Select Material...</option>
                 <option>Aluminum</option>
                 <option>Stainless</option>
-                <option>Fiber Glass</option>
                 <option>Metal</option>
+                <option>Fiber Glass</option>
+                <option>Float Glass</option>
                 <option>Narra Wood</option>
+                <option>Mahogany Wood</option>
               </select>
 
               <button class="btn-calculate">Add to Current Order</button>
@@ -598,6 +601,7 @@
                 <th><span class="th-cell">Name</span></th>
                 <th><span class="th-cell">Order ID</span></th>
                 <th><span class="th-cell">Remaining Balance</span></th>
+                <th><span class="th-cell">Products</span></th>
                 <th><span class="th-cell">Order Date</span></th>
                 <th><span class="th-cell"></span></th>
               </tr>
@@ -605,24 +609,27 @@
             <tbody>
               <tr>
                 <td>x</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td>Erwin Jimenez</td>
+                <td>#1005</td>
+                <td>P500</td>
+                <td>Dinner Table</td>
+                <td>Aug-09-26</td>
+                <td><button class="pay-btn">PAY</button></td>
+              </tr>
+
+              <tr>
+                <td>x</td>
+                <td>Pedro Penduko</td>
+                <td>#1003</td>
+                <td>P500</td>
+                <td>Glass Windows</td>
+                <td>Aug-09-26</td>
                 <td><button class="pay-btn">PAY</button></td>
               </tr>
 
               <tr>
                 <td>x</td>
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td><button class="pay-btn">PAY</button></td>
-              </tr>
-
-              <tr>
-                <td>x</td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -639,7 +646,7 @@
             <div class="receipt-card">
               <div class="receipt-header">
                 <div class="receipt-logo"><span>ALA</span></div>
-                <h3>ALA Glass &amp; Aluminum</h3>
+                <h3>ALA Glass & Aluminum</h3>
                 <p>San Rafael, Bulacan</p>
               </div>
 
@@ -654,17 +661,24 @@
                   <span>Customer</span><span>Name</span>
                 </div>
               </div>
+              
+              <div class="pay-option">
+                <label>
+                  <input type="radio" name="payment_type" value="full" checked>
+                    Full Payment
+                </label>
+              
+                <label>
+                  <input type="radio" name="payment_type" value="downpayment">
+                    Down Payment
+                </label>
+              </div>
 
               <div class="receipt-items-lines">
                 <div class="receipt-line-group">
                   <div class="line thick"></div>
                   <div class="line thin"></div>
                 </div>
-                <div class="receipt-line-group">
-                  <div class="line thick"></div>
-                  <div class="line thin"></div>
-                </div>
-              </div>
 
               <div class="receipt-summary">
                 <div class="summary-row">
