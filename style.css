@@ -13,7 +13,7 @@ body {
 /* Reusable Sidebar Component */
 .sidebar {
   width: 250px;
-  padding: 20px;
+  height: auto;
   display: flex;
   flex-direction: column;
   background: linear-gradient(to top, #080f24 0%, #080f24 5%, #1e3a8a 80%);
@@ -22,15 +22,22 @@ body {
 
 .logo {
   display: flex;
-  width: 110%;
+  width: 100%;
   padding: 10px 10px;
   gap: 9px;
 }
+
+.logo-text {
+  margin-top: 40px;
+}
+
 .ala-logo {
   width: 100%;
   max-width: 80px;
   height: 100%;
   max-height: 100px;
+  margin-top: 20px;
+  margin-left: 10px;
 }
 .logo h2 {
   font-size: 18px;
@@ -44,6 +51,7 @@ body {
 .nav-links {
   display: flex;
   flex-direction: column;
+  padding: 20px;
   gap: 10px;
 }
 .nav-btn {
@@ -62,21 +70,19 @@ body {
 }
 
 .sidebar-footer {
-  width: 249px;
+  width: 100%;
   height: 150px;
   border: 2px solid #e1e7f0;
   background-color: #ffffff;
   padding: 30px 40px 30px;
   margin-top: auto;
-  margin-left: -18px;
-  margin-bottom: -20px;
   display: flex;
   flex-direction: column;
 }
 
 .setting-btn {
   color: #1e3a8a;
-  font-size: large;
+  font-size: 16px;
 }
 
 .setting-icon {
@@ -85,7 +91,7 @@ body {
 
 .logout-btn {
   color: #c51a36;
-  font-size: large;
+  font-size: 16px;
 }
 
 .logout-icon {
@@ -211,6 +217,13 @@ body {
   font-weight: bold;
   color: #ffffff;
   margin-top: 10px;
+}
+
+.sales-meter {
+  width: 100%;
+  max-width: 250px;
+  height: 30px;
+  margin-top: 20px;
 }
 
 .welcome-title {
@@ -1019,12 +1032,52 @@ th {
   color: white;
 }
 
+.status-select {
+  border: 1px solid #cbd5e1;
+  cursor: pointer;
+  background-color: #e2e8f0;
+}
+
+.status-select:has(option.no-status:checked) {
+  color: #c51a36;
+}
+
+.status-select:has(option.badge-cutting:checked) {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.status-select:has(option.badge-assembly:checked) {
+  background-color: #ede9fe;
+  color: #5b21b6;
+}
+
+.status-select:has(option.badge-installing:checked) {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.status-select:has(option.badge-pickup:checked) {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.status-select:has(option.badge-done:checked) {
+  background-color: #e2e8f0;
+  color: #334155;
+}
+
+.no-status {
+  color: #c51a36;
+}
+
 .badge {
   padding: 4px 8px;
   border-radius: 12px;
   font-size: 12px;
   font-weight: bold;
 }
+
 .badge-installing {
   background-color: #dcfce7;
   color: #166534;

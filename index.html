@@ -82,7 +82,7 @@
         <!-- Reusable Card Component Grid -->
         <div class="metrics-grid">
           <div class="card">
-            <h3>Today's Revenue</h3>
+            <h3>Monthly Revenue</h3>
             <p class="metric-value">₱ 0.00</p>
           </div>
           <div class="card">
@@ -91,12 +91,21 @@
           </div>
           <div class="card">
             <h3>Sales Target Progress</h3>
-            <p class="metric-value">75%</p>
+            <meter
+              class="sales-meter"
+              id="meter"
+              value="85"
+              min="0"
+              max="100"
+              low="40"
+              high="60"
+              optimum="80"
+            ></meter>
           </div>
         </div>
 
         <div class="search-order">
-          <input type="Text" placeholder=" Search Orders..." />
+          <input type="text" placeholder=" Search Orders..." />
         </div>
 
         <div class="pending-orders-container">
@@ -116,31 +125,76 @@
                 <td>#1001</td>
                 <td>Juan Cruz</td>
                 <td>Sliding Glass Door</td>
-                <td><span class="badge badge-installing">Installing</span></td>
+                <td>
+                  <select class="badge status-select">
+                    <option class="no-status">No status</option>
+                    <option class="badge-cutting">Cutting</option>
+                    <option class="badge-assembly">Assembly</option>
+                    <option class="badge-installing">Installing</option>
+                    <option class="badge-pickup">Pick up</option>
+                    <option class="badge-done">Done</option>
+                  </select>
+                </td>
               </tr>
               <tr>
                 <td>#1002</td>
                 <td>Maria Santos</td>
                 <td>Aluminum Frame</td>
-                <td><span class="badge badge-cutting">Cutting</span></td>
+                <td>
+                  <select class="badge status-select">
+                    <option class="no-status">No status</option>
+                    <option class="badge-cutting">Cutting</option>
+                    <option class="badge-assembly">Assembly</option>
+                    <option class="badge-installing">Installing</option>
+                    <option class="badge-pickup">Pick up</option>
+                    <option class="badge-done">Done</option>
+                  </select>
+                </td>
               </tr>
               <tr>
                 <td>#1003</td>
                 <td>Pedro Penduko</td>
                 <td>Tempered Glass</td>
-                <td><span class="badge badge-pickup">Pick up</span></td>
+                <td>
+                  <select class="badge status-select">
+                    <option class="no-status">No status</option>
+                    <option class="badge-cutting">Cutting</option>
+                    <option class="badge-assembly">Assembly</option>
+                    <option class="badge-installing">Installing</option>
+                    <option class="badge-pickup">Pick up</option>
+                    <option class="badge-done">Done</option>
+                  </select>
+                </td>
               </tr>
               <tr>
                 <td>#1004</td>
                 <td>Ana Reyes</td>
                 <td>SD-50 Frame</td>
-                <td><span class="badge badge-done">Done</span></td>
+                <td>
+                  <select class="badge status-select">
+                    <option class="no-status">No status</option>
+                    <option class="badge-cutting">Cutting</option>
+                    <option class="badge-assembly">Assembly</option>
+                    <option class="badge-installing">Installing</option>
+                    <option class="badge-pickup">Pick up</option>
+                    <option class="badge-done">Done</option>
+                  </select>
+                </td>
               </tr>
               <tr>
                 <td>#1005</td>
                 <td>Erwin Jimenez</td>
                 <td>Dinner Table</td>
-                <td><span class="badge badge-installing">Installing</span></td>
+                <td>
+                  <select class="badge status-select">
+                    <option class="no-status">No status</option>
+                    <option class="badge-cutting">Cutting</option>
+                    <option class="badge-assembly">Assembly</option>
+                    <option class="badge-installing">Installing</option>
+                    <option class="badge-pickup">Pick up</option>
+                    <option class="badge-done">Done</option>
+                  </select>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -179,37 +233,91 @@
                 <td>#1001</td>
                 <td>Juan Cruz</td>
                 <td>Sliding Glass Door</td>
-                <td><span class="badge badge-installing">Installing</span></td>
+                <td>
+                  <select class="badge status-select">
+                    <option class="no-status">No status</option>
+                    <option class="badge-cutting">Cutting</option>
+                    <option class="badge-assembly">Assembly</option>
+                    <option class="badge-installing">Installing</option>
+                    <option class="badge-pickup">Pick up</option>
+                    <option class="badge-done">Done</option>
+                  </select>
+                </td>
               </tr>
               <tr>
                 <td>#1002</td>
                 <td>Maria Santos</td>
                 <td>Aluminum Frame</td>
-                <td><span class="badge badge-pickup">Pick up</span></td>
+                <td>
+                  <select class="badge status-select">
+                    <option class="no-status">No status</option>
+                    <option class="badge-cutting">Cutting</option>
+                    <option class="badge-assembly">Assembly</option>
+                    <option class="badge-installing">Installing</option>
+                    <option class="badge-pickup">Pick up</option>
+                    <option class="badge-done">Done</option>
+                  </select>
+                </td>
               </tr>
               <tr>
                 <td>#1003</td>
                 <td>Pedro Penduko</td>
                 <td>Tempered Glass</td>
-                <td><span class="badge badge-cutting">Cutting</span></td>
+                <td>
+                  <select class="badge status-select">
+                    <option class="no-status">No status</option>
+                    <option class="badge-cutting">Cutting</option>
+                    <option class="badge-assembly">Assembly</option>
+                    <option class="badge-installing">Installing</option>
+                    <option class="badge-pickup">Pick up</option>
+                    <option class="badge-done">Done</option>
+                  </select>
+                </td>
               </tr>
               <tr>
                 <td>#1004</td>
                 <td>Ana Reyes</td>
                 <td>SD-50 Frame</td>
-                <td><span class="badge badge-installing">Installing</span></td>
+                <td>
+                  <select class="badge status-select">
+                    <option class="no-status">No status</option>
+                    <option class="badge-cutting">Cutting</option>
+                    <option class="badge-assembly">Assembly</option>
+                    <option class="badge-installing">Installing</option>
+                    <option class="badge-pickup">Pick up</option>
+                    <option class="badge-done">Done</option>
+                  </select>
+                </td>
               </tr>
               <tr>
                 <td>#1005</td>
                 <td>Erwin Jimenez</td>
                 <td>Dinner Table</td>
-                <td><span class="badge badge-assembly">Assembly</span></td>
+                <td>
+                  <select class="badge status-select">
+                    <option class="no-status">No status</option>
+                    <option class="badge-cutting">Cutting</option>
+                    <option class="badge-assembly">Assembly</option>
+                    <option class="badge-installing">Installing</option>
+                    <option class="badge-pickup">Pick up</option>
+                    <option class="badge-done">Done</option>
+                  </select>
+                </td>
               </tr>
               <tr>
                 <td>#1006</td>
                 <td>Lito Lapid</td>
                 <td>Glass Window</td>
-                <td><span class="badge badge-done">Done</span></td>
+                <td>
+                  <select class="badge status-select">
+                    <option class="no-status">No status</option>
+                    <option class="badge-cutting">Cutting</option>
+                    <option class="badge-assembly">Assembly</option>
+                    <option class="badge-installing">Installing</option>
+                    <option class="badge-pickup">Pick up</option>
+                    <option class="badge-done">Done</option>
+                  </select>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -248,7 +356,7 @@
                   <option>Select Product...</option>
                   <option>Glass Windows</option>
                   <option>Chair</option>
-                  <option>Cabinet</option>
+                  <option>Sliding Door</option>
                   <option>Windows</option>
                 </select>
                 <input type="number" placeholder="0.00" />
@@ -261,6 +369,7 @@
                 <option>Stainless</option>
                 <option>Fiber Glass</option>
                 <option>Metal</option>
+                <option>Narra Wood</option>
               </select>
 
               <button class="btn-calculate">Add to Current Order</button>
@@ -284,7 +393,7 @@
               <thead>
                 <tr>
                   <th>Description</th>
-                  <th>Dimensity</th>
+                  <th>Dimension</th>
                   <th>Qty</th>
                   <th>Price</th>
                 </tr>
@@ -335,8 +444,9 @@
                 <div class="logo-computation">
                   <div>
                     <img
-                      src="assets/philippine-peso (1).svg"
+                      src="assets/philippine-peso.svg"
                       class="peso-logo"
+                      alt="ph-peso-sign"
                     />
                   </div>
 
@@ -391,7 +501,7 @@
               <thead>
                 <tr>
                   <th>Description</th>
-                  <th>Dimensity</th>
+                  <th>Dimension</th>
                   <th>Qty</th>
                   <th>Price</th>
                 </tr>
@@ -442,7 +552,8 @@
                 <div class="logo-computation">
                   <div>
                     <img
-                      src="assets/philippine-peso (1).svg"
+                      src="assets/philippine-peso.svg"
+                      alt="ph-peso-sign"
                       class="peso-logo"
                     />
                   </div>
