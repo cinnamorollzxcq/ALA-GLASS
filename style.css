@@ -391,6 +391,18 @@ body {
   margin: 0 auto;
 }
 
+.calc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.calc-header p {
+  color: #c51a36;
+  margin: 10px 20px;
+  font-size: 0.85rem;
+}
+
 .calc-container {
   display: flex;
   flex-direction: column;
@@ -1112,4 +1124,61 @@ th {
   border: none;
   background: transparent;
   cursor: pointer;
+}
+
+/* ---- Scrollable order list ---- */
+.current-details {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.current-header {
+  flex-shrink: 0;
+}
+.order-table-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: 380px;
+  overflow-y: auto;
+}
+.order-table-scroll thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: #f5f8ff;
+}
+.current-footer {
+  flex-shrink: 0;
+  margin-top: 20px;
+}
+.total-container {
+  height: auto;
+  max-height: none;
+  min-height: 140px;
+}
+
+/* ---- Fixed materials / labor rows ---- */
+#calculator .order-items-body .component-row td,
+#summary .order-items-body .component-row td {
+  font-size: 0.9rem;
+  color: #475569;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+#calculator .order-items-body .component-row td:first-child,
+#summary .order-items-body .component-row td:first-child {
+  padding-left: 45px;
+}
+.order-items-body .main-row td {
+  padding-top: 12px;
+}
+
+/* ---- Unavailable materials ---- */
+.material-select option:disabled {
+  color: #9ca3af;
+}
+
+#calculator .order-table-scroll thead th,
+#summary .order-table-scroll thead th {
+  background-color: #f5f8ff;
 }

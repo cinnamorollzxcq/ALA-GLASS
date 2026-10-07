@@ -343,7 +343,10 @@
           <!-- LEFT COLUMN: Calculator + Today's Sale -->
           <div class="calc-container">
             <div class="calc-form">
-              <h2>Calculator</h2>
+              <div class="calc-header">
+                <h2>Calculator</h2>
+                <p class="calc-preview" id="calc-error"></p>
+              </div>   
               <div class="width-height">
                 <div>
                   <label>Width (mm)</label>
@@ -365,34 +368,47 @@
               </div>
               <label>Product Type</label>
               <div class="product-type">
-                <select class="calc-select">
-                  <option>Select Product...</option>
+                <select class="calc-select" id="calc-product">
+                  <option value="">Select Product...</option>
                   <option>Glass Windows</option>
+                  <option>Sliding Windows</option>
                   <option>Chair</option>
+                  <option>Cabinet</option>
                   <option>Dinner Table</option>
                   <option>Sliding Door</option>
-                  <option>Windows</option>
+                  <option>Gate</option>
+                  <option>Aquarium</option>
                 </select>
-                <input type="number" placeholder="0.00" />
+                <input
+                  type="number"
+                  id="calc-qty"
+                  min="1"
+                  step="1"
+                  value="1"
+                  placeholder="Qty"
+                  title="Quantity the customer wants to order"
+                />
               </div>
 
               <label>Material type</label>
-              <select class="material-select">
-                <option>Select Material...</option>
+              <select class="material-select" id="calc-material">
+                <option value="">Select Material...</option>
                 <option>Aluminum</option>
                 <option>Stainless</option>
-                <option>Metal</option>
+                <option>Steel</option>
                 <option>Fiber Glass</option>
                 <option>Float Glass</option>
                 <option>Narra Wood</option>
                 <option>Mahogany Wood</option>
               </select>
 
-              <button class="btn-calculate">Add to Current Order</button>
+              <button class="btn-calculate" id="addItemBtn">
+                Add to Current Order
+              </button>
             </div>
             <div class="todays-sale">
               <h2>Today's Sale</h2>
-              <p>₱ 20,000</p>
+              <p id="todaySale">₱ 0.00</p>
             </div>
           </div>
 
@@ -401,58 +417,24 @@
             <div class="current-header">
               <h2>Current order details</h2>
               <div class="filter">
-                <input type="text" placeholder="Search Items..." />
+                <input type="text" class="item-search" placeholder="Search Items..." />
               </div>
             </div>
 
-            <table>
+            <div class="order-table-scroll">
+              <table>
               <thead>
                 <tr>
                   <th>Description</th>
                   <th>Dimension</th>
                   <th>Qty</th>
                   <th>Price</th>
+                  <th></th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td>
-                    <strong>Glass Windows</strong><br />
-                    <small>Tempered Glass</small>
-                  </td>
-                  <td>1300×2400 mm</td>
-                  <td>4</td>
-                  <td>₱ 6,080.00</td>
-                  <td>
-                    <button class="delete-btn">
-                      <img
-                        src="assets/trash.svg"
-                        alt="delete button"
-                        class="delete-icon"
-                      />
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td><strong>Aluminum</strong></td>
-                  <td>1200×2100 mm</td>
-                  <td>10</td>
-                  <td>₱ 10,000.00</td>
-                </tr>
-                <tr>
-                  <td><strong>SD-50 Frame</strong></td>
-                  <td>6000 mm</td>
-                  <td>3</td>
-                  <td>₱ 3,000.00</td>
-                </tr>
-                <tr>
-                  <td><strong>Labor</strong></td>
-                  <td>-</td>
-                  <td>3</td>
-                  <td>₱ 1,000.00</td>
-                </tr>
-              </tbody>
+              <tbody class="order-items-body"></tbody>
             </table>
+            </div>
 
             <div class="current-footer">
               <div class="total-container">
@@ -467,14 +449,14 @@
                   </div>
 
                   <div class="h2p-container">
-                    <h2>20,470.00</h2>
-                    <p>Includes 12% VAT. Valid for 30 days.</p>
+                    <h2 class="order-total">0.00</h2>
+                    <p class="order-note">Includes 12% VAT. Valid for 30 days.</p>
                   </div>
                 </div>
               </div>
               <div>
-                <button class="calculate-btn">Calculate</button>
-                <button class="save-btn">Save Order</button>
+                <button class="calculate-btn" id="calcTotalBtn">Calculate</button>
+                <button class="save-btn" id="saveOrderBtnSummary">Save Order</button>
               </div>
             </div>
           </div>
@@ -509,58 +491,24 @@
             <div class="current-header">
               <h2>Current order details</h2>
               <div class="filter">
-                <input type="text" placeholder="Search Items..." />
+                <input type="text" class="item-search" placeholder="Search Items..." />
               </div>
             </div>
 
-            <table>
+            <div class="order-table-scroll">
+              <table>
               <thead>
                 <tr>
                   <th>Description</th>
                   <th>Dimension</th>
                   <th>Qty</th>
                   <th>Price</th>
+                  <th></th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td>
-                    <strong>Glass Windows</strong><br />
-                    <small>Tempered Glass</small>
-                  </td>
-                  <td>1300×2400 mm</td>
-                  <td>4</td>
-                  <td>₱ 6,080.00</td>
-                  <td>
-                    <button class="delete-btn">
-                      <img
-                        src="assets/trash.svg"
-                        alt="delete button"
-                        class="delete-icon"
-                      />
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td><strong>Aluminum</strong></td>
-                  <td>1200×2100 mm</td>
-                  <td>10</td>
-                  <td>₱ 10,000.00</td>
-                </tr>
-                <tr>
-                  <td><strong>SD-50 Frame</strong></td>
-                  <td>6000 mm</td>
-                  <td>3</td>
-                  <td>₱ 3,000.00</td>
-                </tr>
-                <tr>
-                  <td><strong>Labor</strong></td>
-                  <td>-</td>
-                  <td>3</td>
-                  <td>₱ 1,000.00</td>
-                </tr>
-              </tbody>
+              <tbody class="order-items-body"></tbody>
             </table>
+            </div>
 
             <div class="current-footer">
               <div class="total-container">
@@ -575,14 +523,14 @@
                   </div>
 
                   <div class="h2p-container">
-                    <h2>20,470.00</h2>
-                    <p>Includes 12% VAT. Valid for 30 days.</p>
+                    <h2 class="order-total">0.00</h2>
+                    <p class="order-note">Includes 12% VAT. Valid for 30 days.</p>
                   </div>
                 </div>
               </div>
               <div>
                 <button class="print-btn">Print Receipt</button>
-                <button class="edit-btn">Edit Order</button>
+                <button class="save-btn" id="saveOrderBtn">Save Order</button>
               </div>
             </div>
           </div>
