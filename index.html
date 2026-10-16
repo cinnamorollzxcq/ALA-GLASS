@@ -23,8 +23,15 @@
         <button class="nav-btn" onclick="showPage('calculator', event)">
           Sales Calculator
         </button>
-        <button class="nav-btn" onclick="showPage('summary', event)">
+        <button
+          class="nav-btn"
+          id="navSummary"
+          onclick="showPage('summary', event)"
+        >
           Order Summary
+        </button>
+        <button class="nav-btn" onclick="showPage('pricing', event)">
+          Price Management
         </button>
       </nav>
 
@@ -47,12 +54,22 @@
     <!-- Main Content Area -->
     <main class="main-content">
       <header class="top-bar">
-        <div class="search-container">
-          <input
-            type="text"
-            placeholder="Search orders, materials..."
-            class="search-input"
-          />
+        <div class="top-left">
+          <button
+            id="sidebarToggle"
+            class="sidebar-toggle"
+            aria-label="Toggle sidebar"
+            aria-expanded="true"
+          >
+            <span></span><span></span><span></span>
+          </button>
+          <div class="search-container">
+            <input
+              type="text"
+              placeholder="Search orders, materials..."
+              class="search-input"
+            />
+          </div>
         </div>
 
         <div class="user-profile">
@@ -109,101 +126,27 @@
         </div>
 
         <div class="pending-orders-container">
-          <h3>Pending Orders</h3>
+          <div class="pending-top">
+            <h3>Pending Orders</h3>
+            <button id="sortPendingBtn" class="btn-sort">
+              Sort: Oldest to Newest
+            </button>
+          </div>
 
-          <table class="pill-table">
-            <thead>
-              <tr>
-                <th>ORDER ID</th>
-                <th>CLIENT</th>
-                <th>PRODUCTS</th>
-                <th>ORDER DATE</th>
-                <th>STATUS</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>#1001</td>
-                <td>Juan Cruz</td>
-                <td>Sliding Glass Door</td>
-                <td>Aug-09-26</td>
-                <td>
-                  <select class="badge status-select">
-                    <option class="no-status">No status</option>
-                    <option class="badge-cutting">Cutting</option>
-                    <option class="badge-assembly">Assembly</option>
-                    <option class="badge-installing">Installing</option>
-                    <option class="badge-pickup">Pick up</option>
-                    <option class="badge-done">Done</option>
-                  </select>
-                </td>
-              </tr>
-              <tr>
-                <td>#1002</td>
-                <td>Maria Santos</td>
-                <td>Aluminum Frame</td>
-                <td>Aug-09-26</td>
-                <td>
-                  <select class="badge status-select">
-                    <option class="no-status">No status</option>
-                    <option class="badge-cutting">Cutting</option>
-                    <option class="badge-assembly">Assembly</option>
-                    <option class="badge-installing">Installing</option>
-                    <option class="badge-pickup">Pick up</option>
-                    <option class="badge-done">Done</option>
-                  </select>
-                </td>
-              </tr>
-              <tr>
-                <td>#1003</td>
-                <td>Pedro Penduko</td>
-                <td>Tempered Glass</td>
-                <td>Aug-09-26</td>
-                <td>
-                  <select class="badge status-select">
-                    <option class="no-status">No status</option>
-                    <option class="badge-cutting">Cutting</option>
-                    <option class="badge-assembly">Assembly</option>
-                    <option class="badge-installing">Installing</option>
-                    <option class="badge-pickup">Pick up</option>
-                    <option class="badge-done">Done</option>
-                  </select>
-                </td>
-              </tr>
-              <tr>
-                <td>#1004</td>
-                <td>Ana Reyes</td>
-                <td>SD-50 Frame</td>
-                <td>Aug-09-26</td>
-                <td>
-                  <select class="badge status-select">
-                    <option class="no-status">No status</option>
-                    <option class="badge-cutting">Cutting</option>
-                    <option class="badge-assembly">Assembly</option>
-                    <option class="badge-installing">Installing</option>
-                    <option class="badge-pickup">Pick up</option>
-                    <option class="badge-done">Done</option>
-                  </select>
-                </td>
-              </tr>
-              <tr>
-                <td>#1005</td>
-                <td>Erwin Jimenez</td>
-                <td>Dinner Table</td>
-                <td>Aug-09-26</td>
-                <td>
-                  <select class="badge status-select">
-                    <option class="no-status">No status</option>
-                    <option class="badge-cutting">Cutting</option>
-                    <option class="badge-assembly">Assembly</option>
-                    <option class="badge-installing">Installing</option>
-                    <option class="badge-pickup">Pick up</option>
-                    <option class="badge-done">Done</option>
-                  </select>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="pending-scroll">
+            <table class="pill-table">
+              <thead>
+                <tr>
+                  <th>ORDER ID</th>
+                  <th>CLIENT</th>
+                  <th>PRODUCTS</th>
+                  <th>ORDER DATE</th>
+                  <th>STATUS</th>
+                </tr>
+              </thead>
+              <tbody id="pendingBody"></tbody>
+            </table>
+          </div>
 
           <!--View all button-->
           <div class="view-all-wrapper">
@@ -346,7 +289,7 @@
               <div class="calc-header">
                 <h2>Calculator</h2>
                 <p class="calc-preview" id="calc-error"></p>
-              </div>   
+              </div>
               <div class="width-height">
                 <div>
                   <label>Width (mm)</label>
@@ -417,23 +360,27 @@
             <div class="current-header">
               <h2>Current order details</h2>
               <div class="filter">
-                <input type="text" class="item-search" placeholder="Search Items..." />
+                <input
+                  type="text"
+                  class="item-search"
+                  placeholder="Search Items..."
+                />
               </div>
             </div>
 
             <div class="order-table-scroll">
               <table>
-              <thead>
-                <tr>
-                  <th>Description</th>
-                  <th>Dimension</th>
-                  <th>Qty</th>
-                  <th>Price</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody class="order-items-body"></tbody>
-            </table>
+                <thead>
+                  <tr>
+                    <th>Description</th>
+                    <th>Dimension</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody class="order-items-body"></tbody>
+              </table>
             </div>
 
             <div class="current-footer">
@@ -450,12 +397,16 @@
 
                   <div class="h2p-container">
                     <h2 class="order-total">0.00</h2>
-                    <p class="order-note">Includes 12% VAT. Valid for 30 days.</p>
+                    <p class="order-note">
+                      Includes 12% VAT. Valid for 30 days.
+                    </p>
                   </div>
                 </div>
               </div>
               <div>
-                <button class="calculate-btn" id="calcTotalBtn">Calculate</button>
+                <button class="calculate-btn" id="calcTotalBtn">
+                  Calculate
+                </button>
                 <button class="save-btn" id="PayOrderBtn">Pay Order</button>
               </div>
             </div>
@@ -483,31 +434,35 @@
               />
             </div>
             <div class="confirm-button">
-              <button class="confirm-btn">Confirm</button>
+              <button class="confirm-btn" id="saveOrderBtn">Save Order</button>
             </div>
           </div>
 
           <div class="current-details">
             <div class="current-header">
-              <h2>Current order details</h2>
+              <h2 id="summary-title">Current order details</h2>
               <div class="filter">
-                <input type="text" class="item-search" placeholder="Search Items..." />
+                <input
+                  type="text"
+                  class="item-search"
+                  placeholder="Search Items..."
+                />
               </div>
             </div>
 
             <div class="order-table-scroll">
               <table>
-              <thead>
-                <tr>
-                  <th>Description</th>
-                  <th>Dimension</th>
-                  <th>Qty</th>
-                  <th>Price</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody class="order-items-body"></tbody>
-            </table>
+                <thead>
+                  <tr>
+                    <th>Description</th>
+                    <th>Dimension</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody class="order-items-body"></tbody>
+              </table>
             </div>
 
             <div class="current-footer">
@@ -524,13 +479,17 @@
 
                   <div class="h2p-container">
                     <h2 class="order-total">0.00</h2>
-                    <p class="order-note">Includes 12% VAT. Valid for 30 days.</p>
+                    <p class="order-note">
+                      Includes 12% VAT. Valid for 30 days.
+                    </p>
                   </div>
                 </div>
               </div>
               <div>
                 <button class="print-btn">Print Receipt</button>
-                <button class="save-btn" id="saveOrderBtn">Save Order</button>
+                <button class="save-btn" id="confirmPaymentBtn">
+                  Confirm Payment
+                </button>
               </div>
             </div>
           </div>
@@ -539,53 +498,29 @@
         <div class="unpaid-orders">
           <h2>Unpaid Orders</h2>
           <div class="order-search">
-            <input type="text" placeholder="Search Order..." />
+            <input
+              type="text"
+              id="unpaid-search"
+              placeholder="Search Order..."
+            />
           </div>
 
-          <table class="unpaid-tables">
-            <thead>
-              <tr>
-                <th><span class="th-cell"></span></th>
-                <th><span class="th-cell">Name</span></th>
-                <th><span class="th-cell">Order ID</span></th>
-                <th><span class="th-cell">Remaining Balance</span></th>
-                <th><span class="th-cell">Products</span></th>
-                <th><span class="th-cell">Order Date</span></th>
-                <th><span class="th-cell"></span></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>x</td>
-                <td>Erwin Jimenez</td>
-                <td>#1005</td>
-                <td>P500</td>
-                <td>Dinner Table</td>
-                <td>Aug-09-26</td>
-                <td><button class="pay-btn">PAY</button></td>
-              </tr>
-
-              <tr>
-                <td>x</td>
-                <td>Pedro Penduko</td>
-                <td>#1003</td>
-                <td>P500</td>
-                <td>Glass Windows</td>
-                <td>Aug-09-26</td>
-                <td><button class="pay-btn">PAY</button></td>
-              </tr>
-
-              <tr>
-                <td>x</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td><button class="pay-btn">PAY</button></td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="unpaid-scroll">
+            <table class="unpaid-tables">
+              <thead>
+                <tr>
+                  <th><span class="th-cell"></span></th>
+                  <th><span class="th-cell">Name</span></th>
+                  <th><span class="th-cell">Order ID</span></th>
+                  <th><span class="th-cell">Remaining Balance</span></th>
+                  <th><span class="th-cell">Products</span></th>
+                  <th><span class="th-cell">Order Date</span></th>
+                  <th><span class="th-cell"></span></th>
+                </tr>
+              </thead>
+              <tbody id="unpaid-body"></tbody>
+            </table>
+          </div>
         </div>
 
         <!-- Receipt Modal -->
@@ -600,46 +535,27 @@
 
               <div class="receipt-info">
                 <div class="info-row">
-                  <span>Order ID</span><span>#000</span>
+                  <span>Order ID</span><span id="receipt-order-id">#000</span>
                 </div>
                 <div class="info-row">
-                  <span>Date</span><span>00/00/0000</span>
+                  <span>Date</span><span id="receipt-date">00/00/0000</span>
                 </div>
                 <div class="info-row">
-                  <span>Customer</span><span>Name</span>
+                  <span>Customer</span><span id="receipt-customer">Name</span>
                 </div>
-              </div>
-              
-              <div class="pay-option">
-                <label>
-                  <input type="radio" name="payment_type" value="full" checked>
-                    Full Payment
-                </label>
-              
-                <label>
-                  <input type="radio" name="payment_type" value="downpayment">
-                    Down Payment
-                </label>
               </div>
 
-              <div class="receipt-items-lines">
-                <div class="receipt-line-group">
-                  <div class="line thick"></div>
-                  <div class="line thin"></div>
-                </div>
+              <div class="receipt-items-lines" id="receipt-items"></div>
 
               <div class="receipt-summary">
                 <div class="summary-row">
-                  <span>Subtotal</span><span>₱ 0,000.00</span>
+                  <span>Subtotal</span><span id="receipt-subtotal">₱ 0.00</span>
                 </div>
                 <div class="summary-row">
-                  <span>VAT (12%)</span><span>₱ 000.00</span>
-                </div>
-                <div class="summary-row">
-                  <span>Down Payment</span><span>₱ 0,000.00</span>
+                  <span>VAT (12%)</span><span id="receipt-vat">₱ 0.00</span>
                 </div>
                 <div class="summary-row total-row">
-                  <span>Balance Due</span><span>₱ 0,000.00</span>
+                  <span>Total</span><span id="receipt-total">₱ 0.00</span>
                 </div>
               </div>
 
@@ -653,6 +569,138 @@
               <button id="confirmPrintBtn" class="btn-print">
                 Print Receipt
               </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PRICE MANAGEMENT -->
+      <section id="pricing" class="page-view">
+        <div class="pm-wrap">
+          <div class="pm-head">
+            <h2>Price Management</h2>
+            <p id="pm-msg" class="pm-msg"></p>
+            <button class="pm-btn pm-del" id="pm-reset">
+              Reset to default prices
+            </button>
+          </div>
+
+          <!-- Products -->
+          <div class="pm-box">
+            <h3>Products</h3>
+            <p class="pm-hint">
+              Rate is the price per square meter. Tick the materials that can be
+              used for each product.
+            </p>
+            <div class="pm-scroll">
+              <table class="pm-table">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Rate per m² (₱)</th>
+                    <th>Allowed materials</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="pm-products-body"></tbody>
+              </table>
+            </div>
+            <div class="pm-add">
+              <input
+                type="text"
+                id="pm-new-product"
+                placeholder="New product name"
+              />
+              <input
+                type="number"
+                id="pm-new-product-rate"
+                min="0"
+                step="0.01"
+                placeholder="Rate per m²"
+              />
+              <button class="pm-btn" id="pm-add-product">Add Product</button>
+            </div>
+          </div>
+
+          <!-- Materials -->
+          <div class="pm-box">
+            <h3>Materials</h3>
+            <p class="pm-hint">
+              Multiplier is applied to the product rate (1.00 = normal price,
+              1.50 = 50% more).
+            </p>
+            <div class="pm-scroll">
+              <table class="pm-table">
+                <thead>
+                  <tr>
+                    <th>Material</th>
+                    <th>Price multiplier</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="pm-materials-body"></tbody>
+              </table>
+            </div>
+            <div class="pm-add">
+              <input
+                type="text"
+                id="pm-new-material"
+                placeholder="New material name"
+              />
+              <input
+                type="number"
+                id="pm-new-material-mult"
+                min="0"
+                step="0.01"
+                placeholder="Multiplier"
+              />
+              <button class="pm-btn" id="pm-add-material">Add Material</button>
+            </div>
+          </div>
+
+          <!-- Components -->
+          <div class="pm-box">
+            <h3>Materials &amp; Labor per Product</h3>
+            <p class="pm-hint">
+              Extra items added to every order of the selected product (labor,
+              frames, screws, etc.).
+            </p>
+            <select id="pm-comp-product" class="pm-select"></select>
+            <div class="pm-scroll">
+              <table class="pm-table">
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Charged</th>
+                    <th>Pieces</th>
+                    <th>Price each (₱)</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="pm-components-body"></tbody>
+              </table>
+            </div>
+            <div class="pm-add">
+              <input type="text" id="pm-new-comp" placeholder="Item name" />
+              <select id="pm-new-comp-basis" class="pm-select">
+                <option value="piece">per piece</option>
+                <option value="m2">per m²</option>
+              </select>
+              <input
+                type="number"
+                id="pm-new-comp-pcs"
+                min="1"
+                step="1"
+                placeholder="Pieces"
+              />
+              <input
+                type="number"
+                id="pm-new-comp-price"
+                min="0"
+                step="0.01"
+                placeholder="Price"
+              />
+              <button class="pm-btn" id="pm-add-comp">Add Item</button>
             </div>
           </div>
         </div>
