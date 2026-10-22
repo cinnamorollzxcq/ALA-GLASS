@@ -17,43 +17,34 @@ function showPage(pageId, event) {
     targetPage.classList.add("active");
   }
 
+  // the Orders Section is sized to the screen, so redraw it once it is visible
+  if (pageId === "summary" && typeof showSummaryOrders === "function") {
+    showSummaryOrders();
+  }
+
   // Highlight clicked button
   if (event && event.currentTarget) {
     event.currentTarget.classList.add("active");
   }
 }
 
-// --- ORDER TRACKER MODAL HANDLER ---
-document.addEventListener("DOMContentLoaded", () => {
-  const openBtn = document.getElementById("openTrackerBtn");
-  const closeBtn = document.getElementById("closeTrackerBtn");
-  const modal = document.getElementById("trackerModal");
-
-  // Open Modal when "View all" is clicked
-  if (openBtn && modal) {
-    openBtn.addEventListener("click", () => {
-      modal.classList.add("active");
-    });
-  }
-
-  // Close Modal when "X" button is clicked
-  if (closeBtn && modal) {
-    closeBtn.addEventListener("click", () => {
-      modal.classList.remove("active");
-    });
-  }
-
-  // Close Modal when clicking outside the modal box on the dark overlay
-  if (modal) {
-    window.addEventListener("click", (event) => {
-      if (event.target === modal) {
-        modal.classList.remove("active");
-      }
-    });
-  }
-});
-
 // check the customer boxes; if one is empty, tell the user and focus it
+// today's date as YYYY-MM-DD in the user's LOCAL time
+// (toISOString() uses UTC, which gives yesterday's date in the Philippines before 8 AM)
+function todayString() {
+  const d = new Date();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}-${m}-${day}`;
+}
+
+// set the earliest pickable due date to today
+function updateDueDateMin() {
+  const box = document.getElementById("due-date");
+  if (box) box.min = todayString();
+}
+document.addEventListener("DOMContentLoaded", updateDueDateMin);
+
 function customerInfoFilled() {
   const fields = ["cust-name", "cust-number", "cust-address"];
   for (const id of fields) {
@@ -61,6 +52,23 @@ function customerInfoFilled() {
     if (box.value.trim() === "") {
       alert("Fill up the customer information first.");
       box.focus();
+      return false;
+    }
+  }
+
+  // due date must not be in the past
+  updateDueDateMin();
+  const dueBox = document.getElementById("due-date");
+  const due = dueBox.value;
+  if (due) {
+    // allow an existing order to keep its original (already saved) due date,
+    // otherwise overdue orders could never be paid
+    const saved = openOrderId !== null ? findOrder(openOrderId) : null;
+    const unchanged = saved && saved.due === due;
+
+    if (due < todayString() && !unchanged) {
+      alert("Due date cannot be earlier than today.");
+      dueBox.focus();
       return false;
     }
   }
@@ -233,7 +241,6 @@ function updateMaterialOptions() {
 
 let currentOrder = [];
 let nextItemId = 1;
-let totalsCalculated = false;
 
 const peso = (n) =>
   n.toLocaleString("en-PH", {
@@ -351,22 +358,19 @@ function renderOrder(filter = "") {
   renderTotals();
 }
 
-// Show the total only after the Calculate button has been pressed
+// Show the total whenever there are items in the order
 function renderTotals() {
   const { subtotal, vat, total } = getTotals();
-  const show = totalsCalculated && currentOrder.length > 0;
+  const hasItems = currentOrder.length > 0;
 
   document
     .querySelectorAll(".order-total")
-    .forEach((el) => (el.textContent = show ? peso(total) : "0.00"));
+    .forEach((el) => (el.textContent = hasItems ? peso(total) : "0.00"));
   document.querySelectorAll(".order-note").forEach((el) => {
-    if (show) {
+    if (hasItems) {
       el.textContent = `Subtotal ₱ ${peso(subtotal)} + 12% VAT ₱ ${peso(vat)}. Valid for 30 days.`;
     } else {
-      el.textContent =
-        currentOrder.length === 0
-          ? "Includes 12% VAT. Valid for 30 days."
-          : "Press Calculate to see the total.";
+      el.textContent = "Includes 12% VAT. Valid for 30 days.";
     }
   });
 }
@@ -381,22 +385,6 @@ function updatePreview() {
   } else {
     preview.textContent = "";
   }
-}
-
-// ----- Today's sale (saved orders, stored per day in localStorage) -----
-const todayKey = () => "ala-sales-" + new Date().toISOString().slice(0, 10);
-
-function getTodaySale() {
-  try {
-    return parseFloat(localStorage.getItem(todayKey())) || 0;
-  } catch {
-    return 0;
-  }
-}
-
-function renderTodaySale() {
-  const el = document.getElementById("todaySale");
-  if (el) el.textContent = "₱ " + peso(getTodaySale());
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -430,7 +418,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (openOrderId !== null) clearSummary();
 
     currentOrder.push({ id: nextItemId++, ...result.item });
-    totalsCalculated = false;
     renderOrder();
 
     // Reset the form for the next item
@@ -457,8 +444,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
     currentOrder = currentOrder.filter((i) => i.id !== Number(btn.dataset.id));
-    // keep the total visible while editing a saved order
-    totalsCalculated = openOrderId !== null;
     renderOrder();
   });
 
@@ -467,100 +452,49 @@ document.addEventListener("DOMContentLoaded", () => {
     input.addEventListener("input", () => renderOrder(input.value));
   });
 
-  // Calculate button: compute and show the total
-  const calcBtn = document.getElementById("calcTotalBtn");
-  if (calcBtn) {
-    calcBtn.addEventListener("click", () => {
-      if (currentOrder.length === 0) {
-        errorEl.textContent = "Add at least one item before calculating.";
-        return;
-      }
+  // Confirm button: save the order (not paid yet)
+  document.getElementById("saveOrderBtn").addEventListener("click", () => {
+    const openSaved = openOrderId === null ? null : findOrder(openOrderId);
+
+    // editing an order that was saved earlier (unpaid): keep saving the changes
+    if (openSaved && openSaved.balance > 0) {
+      const order = saveCurrentOrder(false);
+      if (!order) return;
       errorEl.textContent = "";
-      totalsCalculated = true;
-      renderTotals();
-    });
-  }
-
-  // Save order: add total to today's sale and clear the order
-  const saveBtn = document.getElementById("saveOrderBtn");
-  if (saveBtn) {
-    saveBtn.addEventListener("click", () => {
-      if (currentOrder.length === 0) {
-        alert("Add at least one item before saving.");
-        return;
-      }
-      // show the total even if Calculate was not pressed
-      totalsCalculated = true;
-      renderTotals();
-      const custName = document.getElementById("cust-name").value.trim();
-      const custNumber = document.getElementById("cust-number").value.trim();
-      const custAddress = document.getElementById("cust-address").value.trim();
-      if (custName === "" || custNumber === "" || custAddress === "") {
-        alert("Fill up the customer information first.");
-        // put the cursor on the first empty box
-        if (custName === "") {
-          document.getElementById("cust-name").focus();
-        } else if (custNumber === "") {
-          document.getElementById("cust-number").focus();
-        } else {
-          document.getElementById("cust-address").focus();
-        }
-        return;
-      }
-      errorEl.textContent = "";
-      const { subtotal, vat, total } = getTotals();
-
-      // an already saved order: save the changes instead of making a new one
-      const existing = openOrderId === null ? null : findOrder(openOrderId);
-      if (existing) {
-        const newTotal = Math.round(total * 100) / 100;
-        const difference = newTotal - existing.total;
-        existing.name = custName;
-        existing.contact = custNumber;
-        existing.address = custAddress;
-        existing.items = currentOrder.slice();
-        existing.subtotal = subtotal;
-        existing.vat = vat;
-        existing.total = newTotal;
-        existing.balance = newTotal;
-        storeOrders();
-        try {
-          localStorage.setItem(
-            todayKey(),
-            Math.max(0, getTodaySale() + difference),
-          );
-        } catch {}
-        showUnpaidOrders();
-        showOrderButtons();
-        renderTodaySale();
-        alert(`Changes saved. Total: ₱ ${peso(newTotal)}`);
-        return;
-      }
-
-      try {
-        localStorage.setItem(todayKey(), getTodaySale() + total);
-      } catch {}
-
-      // put the order in the unpaid list
-      openOrderId = addSavedOrder(
-        custName,
-        custNumber,
-        custAddress,
-        currentOrder.slice(),
-        subtotal,
-        vat,
-        total,
-      );
-
-      // the order stays on screen so it can be printed
       showOrderButtons();
-      renderTodaySale();
-      alert(`Order saved. Total: ₱ ${peso(total)}`);
+      alert(`Order #${order.id} saved. Total: ₱ ${peso(order.total)}`);
+      return;
+    }
+
+    // new order: Confirm only checks the customer info, it does NOT save the
+    // order. The order reaches the Order Summary when payment is confirmed.
+    if (!customerInfoFilled()) return;
+    infoConfirmed = true;
+    showOrderButtons();
+  });
+
+  // changing any customer box means the info needs to be confirmed again
+  ["cust-name", "cust-number", "cust-address", "due-date"].forEach((id) => {
+    document.getElementById(id).addEventListener("input", () => {
+      if (!infoConfirmed) return;
+      infoConfirmed = false;
+      showOrderButtons();
     });
-  }
+  });
+
+  // Confirm Payment button: save the order AND mark it as paid
+  document.getElementById("confirmPaymentBtn").addEventListener("click", () => {
+    const order = saveCurrentOrder(true);
+    if (!order) return;
+    errorEl.textContent = "";
+    alert(`Order #${order.id} is paid. Total: ₱ ${peso(order.total)}`);
+
+    // empty the calculator for the next customer, then show the Order Summary
+    clearSummary();
+    goToSummary();
+  });
 
   renderOrder();
-  renderTodaySale();
 });
 
 //-----Sidebar toggle------
@@ -976,7 +910,8 @@ function storeOrders() {
   try {
     localStorage.setItem(ORDERS_KEY, JSON.stringify(savedOrders));
   } catch {}
-  showPendingOrders();
+  showDeadlines();
+  showSummaryOrders();
 }
 
 // Pending Orders table on the dashboard (paid orders only)
@@ -989,82 +924,191 @@ const STATUS_LIST = [
   ["Done", "badge-done"],
 ];
 
-// false = oldest first, true = newest first
-let newestFirst = false;
+// ----- Approaching Deadlines (dashboard) -----
+const URGENT_DAYS = 3; // due in this many days or less = red card
 
-function showPendingOrders() {
-  const body = document.getElementById("pendingBody");
-  if (!body) return;
-
-  // get the paid orders and sort them by id
-  const paidOrders = savedOrders.filter((o) => o.balance <= 0);
-  paidOrders.sort((a, b) => (newestFirst ? b.id - a.id : a.id - b.id));
-
-  let html = "";
-  let rows = 0;
-
-  for (let i = 0; i < paidOrders.length; i++) {
-    const order = paidOrders[i];
-
-    const names = [];
-    for (let k = 0; k < order.items.length; k++) {
-      if (!names.includes(order.items[k].product))
-        names.push(order.items[k].product);
-    }
-
-    let options = "";
-    for (let k = 0; k < STATUS_LIST.length; k++) {
-      const selected = STATUS_LIST[k][0] === order.status ? " selected" : "";
-      options += `<option class="${STATUS_LIST[k][1]}"${selected}>${STATUS_LIST[k][0]}</option>`;
-    }
-
-    html += `
-      <tr>
-        <td>#${order.id}</td>
-        <td>${escapeHTML(order.name)}</td>
-        <td>${escapeHTML(names.join(", "))}</td>
-        <td>${formatDate(order.date)}</td>
-        <td>
-          <select class="badge status-select" data-id="${order.id}">${options}</select>
-        </td>
-      </tr>`;
-    rows++;
-  }
-
-  // always keep at least 5 rows, the empty ones get filled later
-  for (let i = rows; i < 5; i++) {
-    html += "<tr><td></td><td></td><td></td><td></td><td></td></tr>";
-  }
-
-  body.innerHTML = html;
+// turn the saved due date into a Date (or null when it can't be read)
+function parseDue(text) {
+  if (!text) return null;
+  const d = /^\d{4}-\d{2}-\d{2}$/.test(text)
+    ? new Date(text + "T00:00:00")
+    : new Date(text);
+  return isNaN(d) ? null : d;
 }
 
-// remember the status the user picked
-document.addEventListener("DOMContentLoaded", () => {
-  const body = document.getElementById("pendingBody");
-  if (!body) return;
+// days from today until the due date (negative = overdue)
+function daysLeft(due) {
+  const d = parseDue(due);
+  if (!d) return null;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  d.setHours(0, 0, 0, 0);
+  return Math.round((d - today) / 86400000);
+}
 
-  // draw the table first so the empty rows always show
-  showPendingOrders();
+function dueLabel(days) {
+  if (days === null) return "Due: not set";
+  if (days < 0) {
+    const n = -days;
+    return "Overdue: " + n + (n === 1 ? " day" : " days");
+  }
+  if (days === 0) return "Due: today";
+  return "Due: " + days + (days === 1 ? " day" : " days");
+}
 
-  body.addEventListener("change", (e) => {
-    const order = findOrder(Number(e.target.dataset.id));
-    if (!order) return;
-    order.status = e.target.value;
-    storeOrders();
+// the due date shown in the details popup
+function formatDueText(text) {
+  const d = parseDue(text);
+  return d ? formatDate(d.toISOString()) : text;
+}
+
+// paid orders that are not finished yet, closest deadline first
+function getDeadlineOrders() {
+  const search = document.getElementById("dashSearch");
+  const q = search ? search.value.trim().toLowerCase() : "";
+
+  const list = savedOrders.filter((o) => {
+    if (o.balance > 0 || o.status === "Done") return false;
+    if (q === "") return true;
+    const products = o.items.map((i) => i.product).join(" ");
+    return `#${o.id} ${o.name} ${products}`.toLowerCase().includes(q);
   });
 
-  // sort button
-  const sortBtn = document.getElementById("sortPendingBtn");
-  if (sortBtn) {
-    sortBtn.addEventListener("click", () => {
-      newestFirst = !newestFirst;
-      sortBtn.textContent = newestFirst
-        ? "Sort: Newest to Oldest"
-        : "Sort: Oldest to Newest";
-      showPendingOrders();
+  list.sort((a, b) => {
+    const da = daysLeft(a.due);
+    const db = daysLeft(b.due);
+    if (da === null && db === null) return a.id - b.id;
+    if (da === null) return 1;
+    if (db === null) return -1;
+    return da - db || a.id - b.id;
+  });
+  return list;
+}
+
+function showDeadlines() {
+  const track = document.getElementById("deadlineTrack");
+  if (!track) return;
+
+  const orders = getDeadlineOrders();
+  let urgent = 0;
+  let html = "";
+
+  for (const order of orders) {
+    const days = daysLeft(order.due);
+    const isUrgent = days !== null && days <= URGENT_DAYS;
+    if (isUrgent) urgent++;
+
+    const names = [];
+    order.items.forEach((it) => {
+      if (!names.includes(it.product)) names.push(it.product);
     });
+
+    const items = order.items
+      .map(
+        (it) =>
+          `<li><strong>${it.qty}x</strong> ${escapeHTML(it.product)} (${escapeHTML(it.material)}, ${it.width}×${it.height} mm)</li>`,
+      )
+      .join("");
+
+    const status = order.status || "No status";
+    const tagClass =
+      (STATUS_LIST.find((s) => s[0] === status) || [])[1] || "no-status";
+
+    html += `
+      <article class="dl-card${isUrgent ? " urgent" : ""}">
+        <div class="dl-top">
+          <span class="dl-id">ID:#${order.id}</span>
+          <span class="dl-tag ${tagClass}">${escapeHTML(status)}</span>
+        </div>
+        <p class="dl-name">${escapeHTML(order.name)}</p>
+        <p class="dl-sub">${escapeHTML(names.join(", "))}</p>
+        <ul class="dl-items">${items}</ul>
+        <div class="dl-due">${dueLabel(days)}</div>
+        <div class="dl-actions">
+          <button class="dl-details" data-id="${order.id}">Customer Details</button>
+          <button class="dl-done" data-id="${order.id}">Done</button>
+        </div>
+      </article>`;
   }
+
+  if (html === "") {
+    html = `<p class="dl-empty">No approaching deadlines. Paid orders that are not done yet will show up here.</p>`;
+  }
+
+  track.innerHTML = html;
+  document.getElementById("deadlineCount").textContent = urgent;
+  updateDeadlineArrows();
+  showDashboardStats();
+}
+
+// Today's Revenue + Orders Completed cards
+function showDashboardStats() {
+  const revenueEl = document.getElementById("revenueToday");
+  const doneEl = document.getElementById("completedCount");
+  if (!revenueEl || !doneEl) return;
+
+  const today = new Date().toDateString();
+  let revenue = 0;
+  let done = 0;
+  savedOrders.forEach((o) => {
+    if (o.balance > 0) return;
+    if (new Date(o.date).toDateString() === today) revenue += o.total;
+    if (o.status === "Done") done++;
+  });
+
+  revenueEl.textContent = "₱ " + peso(revenue);
+  doneEl.textContent = String(done).padStart(2, "0");
+}
+
+// show the left / right arrows only when there is more to scroll
+function updateDeadlineArrows() {
+  const track = document.getElementById("deadlineTrack");
+  const prev = document.getElementById("deadlinePrev");
+  const next = document.getElementById("deadlineNext");
+  if (!track || !prev || !next) return;
+
+  const max = track.scrollWidth - track.clientWidth;
+  prev.hidden = track.scrollLeft <= 4;
+  next.hidden = max <= 4 || track.scrollLeft >= max - 4;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const track = document.getElementById("deadlineTrack");
+  if (!track) return;
+
+  showDeadlines();
+
+  document
+    .getElementById("dashSearch")
+    .addEventListener("input", showDeadlines);
+
+  // scroll arrows
+  const step = () => Math.max(track.clientWidth * 0.8, 300);
+  document.getElementById("deadlineNext").addEventListener("click", () => {
+    track.scrollBy({ left: step(), behavior: "smooth" });
+  });
+  document.getElementById("deadlinePrev").addEventListener("click", () => {
+    track.scrollBy({ left: -step(), behavior: "smooth" });
+  });
+  track.addEventListener("scroll", updateDeadlineArrows);
+  window.addEventListener("resize", updateDeadlineArrows);
+
+  // Customer Details = same popup as the "view" button; Done = finish order
+  track.addEventListener("click", (e) => {
+    const detailsBtn = e.target.closest(".dl-details");
+    if (detailsBtn) {
+      openOrderDetail(Number(detailsBtn.dataset.id));
+      return;
+    }
+    const doneBtn = e.target.closest(".dl-done");
+    if (doneBtn) {
+      const order = findOrder(Number(doneBtn.dataset.id));
+      if (!order) return;
+      if (!confirm("Mark order #" + order.id + " as done?")) return;
+      order.status = "Done";
+      storeOrders();
+    }
+  });
 });
 
 // Aug-09-26 style date
@@ -1089,7 +1133,16 @@ function formatDate(isoText) {
   return months[d.getMonth()] + "-" + day + "-" + year;
 }
 
-function addSavedOrder(name, contact, address, items, subtotal, vat, total) {
+function addSavedOrder(
+  name,
+  contact,
+  address,
+  items,
+  subtotal,
+  vat,
+  total,
+  due,
+) {
   // new order id = highest id + 1 (starts at 1001)
   let nextId = 1001;
   for (let i = 0; i < savedOrders.length; i++) {
@@ -1102,6 +1155,7 @@ function addSavedOrder(name, contact, address, items, subtotal, vat, total) {
     name: name,
     contact: contact,
     address: address,
+    due: due || "",
     items: items,
     subtotal: subtotal,
     vat: vat,
@@ -1110,12 +1164,12 @@ function addSavedOrder(name, contact, address, items, subtotal, vat, total) {
     date: new Date().toISOString(),
   });
   storeOrders();
-  showUnpaidOrders();
+  showSummaryOrders();
   return nextId;
 }
 
-// draw the unpaid orders table (only orders that still have a balance)
-function showUnpaidOrders() {
+// draw the Orders Section table on the Order Summary page
+function showSummaryOrders() {
   const body = document.getElementById("unpaid-body");
   if (!body) return;
 
@@ -1124,11 +1178,11 @@ function showUnpaidOrders() {
     .value.trim()
     .toLowerCase();
   let html = "";
+  let rows = 0;
 
   // newest order first
   for (let i = savedOrders.length - 1; i >= 0; i--) {
     const order = savedOrders[i];
-    const isPaid = order.balance <= 0;
 
     // product names without repeats
     const names = [];
@@ -1136,32 +1190,68 @@ function showUnpaidOrders() {
       if (!names.includes(order.items[k].product))
         names.push(order.items[k].product);
     }
-    const products = names.join(", ");
 
-    const text = (order.name + " #" + order.id + " " + products).toLowerCase();
+    const text = (
+      order.name +
+      " #" +
+      order.id +
+      " " +
+      names.join(", ")
+    ).toLowerCase();
     if (!text.includes(search)) continue;
+
+    // status dropdown (same options as the dashboard)
+    const current = order.status || "No status";
+    let options = "";
+    for (let k = 0; k < STATUS_LIST.length; k++) {
+      const selected = STATUS_LIST[k][0] === current ? " selected" : "";
+      options += `<option class="${STATUS_LIST[k][1]}"${selected}>${STATUS_LIST[k][0]}</option>`;
+    }
 
     html += `
       <tr>
         <td class="remove-cell" title="Remove order" onclick="deleteSavedOrder(${order.id})">x</td>
-        <td>${escapeHTML(order.name)}</td>
         <td>#${order.id}</td>
-        <td>₱ ${peso(order.balance)}</td>
-        <td>${escapeHTML(products)}</td>
+        <td>${escapeHTML(order.name)}</td>
         <td>${formatDate(order.date)}</td>
-        <td>${
-          isPaid
-            ? '<button class="pay-btn paid" disabled>PAID</button>'
-            : `<button class="pay-btn" onclick="loadOrderForPayment(${order.id})">PAY</button>`
-        }</td>
+        <td>
+          <select class="badge status-select" data-id="${order.id}">${options}</select>
+        </td>
+        <td><button class="view-btn" onclick="openOrderDetail(${order.id})">view</button></td>
       </tr>`;
+    rows++;
   }
 
-  if (html === "") {
-    html = '<tr><td colspan="7" class="empty-order">No orders yet.</td></tr>';
+  // fill the rest of the screen with empty rows (at least 10)
+  const target = fitSummaryRows();
+  for (let i = rows; i < target; i++) {
+    html += "<tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>";
   }
   body.innerHTML = html;
 }
+
+// one row = 58px pill + 8px gap (keep in sync with .unpaid-tables td in style.css)
+const SUMMARY_ROW_PITCH = 66;
+const SUMMARY_MIN_ROWS = 10;
+
+// sizes the scroll box down to the bottom of the screen and returns
+// how many rows are needed to fill it (never less than SUMMARY_MIN_ROWS)
+function fitSummaryRows() {
+  const box = document.querySelector(".unpaid-scroll");
+  // page is hidden (not measurable yet): just use the minimum
+  if (!box || box.offsetParent === null) return SUMMARY_MIN_ROWS;
+
+  const top = box.getBoundingClientRect().top + window.scrollY;
+  const available = Math.max(300, window.innerHeight - top - 40);
+  box.style.maxHeight = available + "px";
+
+  const header = box.querySelector("thead").offsetHeight;
+  const fit = Math.ceil((available - header) / SUMMARY_ROW_PITCH);
+  return Math.max(SUMMARY_MIN_ROWS, fit);
+}
+
+// redraw when the window size changes
+window.addEventListener("resize", () => showSummaryOrders());
 
 function findOrder(id) {
   for (let i = 0; i < savedOrders.length; i++) {
@@ -1179,31 +1269,84 @@ function goToSummary() {
   document.getElementById("navSummary").classList.add("active");
 }
 
-// show the right buttons for the order on the summary page
+// go to the Sales Calculator page and light up its menu button
+function goToCalculator() {
+  showPage("calculator");
+  document.getElementById("navCalculator").classList.add("active");
+}
+
+// the left button says "Save Changes" while editing a saved (unpaid) order
+// true after the user pressed Confirm and the customer info is complete
+let infoConfirmed = false;
+
 function showOrderButtons() {
   const order = openOrderId === null ? null : findOrder(openOrderId);
-  const title = document.getElementById("summary-title");
   const saveBtn = document.getElementById("saveOrderBtn");
-  const confirmBtn = document.getElementById("confirmPaymentBtn");
 
-  if (order === null) {
-    // a new order that is not saved yet
-    title.textContent = "Current order details";
-    saveBtn.textContent = "Save Order";
-    saveBtn.style.display = "";
-    confirmBtn.style.display = "";
-  } else if (order.balance > 0) {
-    // saved but not paid yet: it can still be edited and saved again
-    title.textContent = "Order #" + order.id;
+  saveBtn.classList.toggle("confirmed", infoConfirmed);
+  if (order !== null && order.balance > 0) {
     saveBtn.textContent = "Save Changes";
-    saveBtn.style.display = "";
-    confirmBtn.style.display = "";
+  } else if (infoConfirmed) {
+    saveBtn.textContent = "✓ Confirmed";
   } else {
-    // already paid
-    title.textContent = "Order #" + order.id + " (Paid)";
-    saveBtn.style.display = "none";
-    confirmBtn.style.display = "none";
+    saveBtn.textContent = "Confirm";
   }
+}
+
+// Save what is on the screen into the Order Summary list.
+// markAsPaid = true  -> the order is saved as PAID
+// markAsPaid = false -> the order is saved as UNPAID
+// Returns the saved order, or null if something is missing.
+function saveCurrentOrder(markAsPaid) {
+  if (currentOrder.length === 0) {
+    alert("Add at least one item first.");
+    return null;
+  }
+  if (!customerInfoFilled()) return null;
+
+  const name = document.getElementById("cust-name").value.trim();
+  const contact = document.getElementById("cust-number").value.trim();
+  const address = document.getElementById("cust-address").value.trim();
+  const due = document.getElementById("due-date").value.trim();
+  const { subtotal, vat, total } = getTotals();
+  const roundedTotal = Math.round(total * 100) / 100;
+
+  let order = openOrderId === null ? null : findOrder(openOrderId);
+
+  if (order && order.balance <= 0) {
+    alert("This order is already paid and can no longer be edited.");
+    return null;
+  }
+
+  if (order) {
+    // already saved before: update it
+    order.name = name;
+    order.contact = contact;
+    order.address = address;
+    order.due = due;
+    order.items = currentOrder.slice();
+    order.subtotal = subtotal;
+    order.vat = vat;
+    order.total = roundedTotal;
+  } else {
+    // brand new order
+    openOrderId = addSavedOrder(
+      name,
+      contact,
+      address,
+      currentOrder.slice(),
+      subtotal,
+      vat,
+      total,
+      due,
+    );
+    order = findOrder(openOrderId);
+  }
+
+  // balance 0 means paid
+  order.balance = markAsPaid ? 0 : roundedTotal;
+  storeOrders();
+  return order;
 }
 
 // PAY button: load the customer info and items into the Order Summary
@@ -1218,59 +1361,33 @@ function loadOrderForPayment(id) {
   }
 
   openOrderId = id;
+  infoConfirmed = false;
   currentOrder = order.items.slice();
-  totalsCalculated = true;
 
   document.getElementById("cust-name").value = order.name;
   document.getElementById("cust-number").value = order.contact;
   document.getElementById("cust-address").value = order.address;
+  document.getElementById("due-date").value = order.due || "";
 
   renderOrder();
   showOrderButtons();
-  goToSummary();
+  goToCalculator();
 }
 
 // empty the summary page (after paying or cancelling)
 function clearSummary() {
   openOrderId = null;
+  infoConfirmed = false;
   currentOrder = [];
-  totalsCalculated = false;
 
   document.getElementById("cust-name").value = "";
   document.getElementById("cust-number").value = "";
   document.getElementById("cust-address").value = "";
+  document.getElementById("due-date").value = "";
 
   renderOrder();
   showOrderButtons();
-  showUnpaidOrders();
-}
-
-function confirmPayment() {
-  // the order must be saved first (Save Order button under Customer Information)
-  if (openOrderId === null) {
-    alert("Save the order first before confirming payment.");
-    return;
-  }
-  const order = findOrder(openOrderId);
-  if (!order) return;
-
-  // items were removed but not saved yet, so the saved total is out of date
-  const sameItems =
-    order.items.length === currentOrder.length &&
-    order.items.every((item, n) => item.id === currentOrder[n].id);
-  if (!sameItems) {
-    alert(
-      "You changed this order. Press Save Changes before confirming payment.",
-    );
-    return;
-  }
-
-  order.balance = 0;
-  storeOrders();
-  alert("Order #" + order.id + " is fully paid. Total: ₱ " + peso(order.total));
-
-  // paid: empty the summary so it is ready for the next order
-  clearSummary();
+  showSummaryOrders();
 }
 
 function deleteSavedOrder(id) {
@@ -1278,30 +1395,22 @@ function deleteSavedOrder(id) {
   savedOrders = savedOrders.filter((o) => o.id !== id);
   storeOrders();
   if (id === openOrderId) clearSummary();
-  showUnpaidOrders();
+  showSummaryOrders();
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   const searchBox = document.getElementById("unpaid-search");
   if (!searchBox) return;
-  searchBox.addEventListener("input", showUnpaidOrders);
-  showUnpaidOrders();
+  searchBox.addEventListener("input", showSummaryOrders);
 
-  // Pay Order (calculator page) -> Order Summary page
-  document.getElementById("PayOrderBtn").addEventListener("click", () => {
-    if (currentOrder.length === 0) {
-      alert("Add at least one item before paying.");
-      return;
-    }
-    totalsCalculated = true;
-    renderTotals();
-    goToSummary();
-    document.getElementById("cust-name").focus();
+  // remember the status picked in the Orders Section
+  document.getElementById("unpaid-body").addEventListener("change", (e) => {
+    const order = findOrder(Number(e.target.dataset.id));
+    if (!order) return;
+    order.status = e.target.value;
+    storeOrders();
   });
-
-  document
-    .getElementById("confirmPaymentBtn")
-    .addEventListener("click", confirmPayment);
+  showSummaryOrders();
 });
 
 //-----Receipt------
@@ -1352,3 +1461,64 @@ function fillReceipt() {
   document.getElementById("receipt-total").textContent =
     "₱ " + peso(totals.total);
 }
+
+//-----Order details popup (view button on Order Summary)------
+function openOrderDetail(id) {
+  const order = findOrder(id);
+  if (!order) return;
+  const modal = document.getElementById("orderDetailModal");
+  modal.dataset.orderId = id;
+
+  document.getElementById("od-id").textContent = "Order ID: " + order.id;
+  document.getElementById("od-date").textContent =
+    "Order Date: " + formatDate(order.date);
+  document.getElementById("od-due").textContent =
+    "Order Due: " + (order.due ? formatDueText(order.due) : "Not set");
+  document.getElementById("od-name").textContent = order.name;
+  document.getElementById("od-contact").textContent = order.contact;
+  document.getElementById("od-address").textContent = order.address;
+  document.getElementById("od-total").textContent = "₱ " + peso(order.total);
+
+  let html = "";
+  for (let i = 0; i < order.items.length; i++) {
+    const item = order.items[i];
+    html += `
+      <div class="od-item">
+        <div>
+          ${escapeHTML(item.product)} (${escapeHTML(item.material)})
+          <small>${item.width}×${item.height} mm × ${item.qty}</small>
+        </div>
+        <div>₱ ${peso(item.total)}</div>
+      </div>`;
+  }
+  document.getElementById("od-items").innerHTML = html;
+
+  const paid = order.balance <= 0;
+  const state = document.getElementById("od-state");
+  state.textContent = paid
+    ? "PAID"
+    : "UNPAID · Balance ₱ " + peso(order.balance);
+  state.className = "od-state " + (paid ? "paid" : "unpaid");
+  document.getElementById("odPayBtn").style.display = paid ? "none" : "";
+
+  modal.classList.add("active");
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const modal = document.getElementById("orderDetailModal");
+  if (!modal) return;
+  const close = () => modal.classList.remove("active");
+
+  document
+    .getElementById("closeOrderDetailBtn")
+    .addEventListener("click", close);
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) close();
+  });
+  // unpaid order: open it in the calculator to pay or edit
+  document.getElementById("odPayBtn").addEventListener("click", () => {
+    const id = Number(modal.dataset.orderId);
+    close();
+    loadOrderForPayment(id);
+  });
+});

@@ -20,7 +20,11 @@
         <button class="nav-btn active" onclick="showPage('dashboard', event)">
           Dashboard
         </button>
-        <button class="nav-btn" onclick="showPage('calculator', event)">
+        <button
+          class="nav-btn"
+          id="navCalculator"
+          onclick="showPage('calculator', event)"
+        >
           Sales Calculator
         </button>
         <button
@@ -99,12 +103,12 @@
         <!-- Reusable Card Component Grid -->
         <div class="metrics-grid">
           <div class="card">
-            <h3>Monthly Revenue</h3>
-            <p class="metric-value">₱ 0.00</p>
+            <h3>Today's Revenue</h3>
+            <p class="metric-value" id="revenueToday">₱ 0.00</p>
           </div>
           <div class="card">
             <h3>Orders Completed</h3>
-            <p class="metric-value">02</p>
+            <p class="metric-value" id="completedCount">00</p>
           </div>
           <div class="card">
             <h3>Sales Target Progress</h3>
@@ -122,168 +126,43 @@
         </div>
 
         <div class="search-order">
-          <input type="text" placeholder=" Search Orders..." />
+          <input type="text" id="dashSearch" placeholder=" Search Order..." />
         </div>
 
-        <div class="pending-orders-container">
-          <div class="pending-top">
-            <h3>Pending Orders</h3>
-            <button id="sortPendingBtn" class="btn-sort">
-              Sort: Oldest to Newest
+        <div class="deadlines-container">
+          <div class="deadlines-top">
+            <span class="deadline-count" id="deadlineCount">0</span>
+            <div>
+              <h3>Approaching Deadlines</h3>
+              <p>Fabrication deadlines requiring immediate shop floor action</p>
+            </div>
+          </div>
+
+          <div class="deadline-wrap">
+            <button
+              id="deadlinePrev"
+              class="deadline-arrow left"
+              aria-label="Scroll left"
+              hidden
+            >
+              &#8249;
             </button>
-          </div>
-
-          <div class="pending-scroll">
-            <table class="pill-table">
-              <thead>
-                <tr>
-                  <th>ORDER ID</th>
-                  <th>CLIENT</th>
-                  <th>PRODUCTS</th>
-                  <th>ORDER DATE</th>
-                  <th>STATUS</th>
-                </tr>
-              </thead>
-              <tbody id="pendingBody"></tbody>
-            </table>
-          </div>
-
-          <!--View all button-->
-          <div class="view-all-wrapper">
-            <button id="openTrackerBtn" class="btn-view-all">View all</button>
+            <div class="deadline-track" id="deadlineTrack"></div>
+            <button
+              id="deadlineNext"
+              class="deadline-arrow right"
+              aria-label="Scroll right"
+            >
+              &#8250;
+            </button>
           </div>
         </div>
       </section>
 
-      <!-- Order Tracker Modal -->
-      <div id="trackerModal" class="modal-overlay">
-        <div class="modal-content">
-          <button id="closeTrackerBtn" class="modal-close">&times;</button>
-
-          <div class="modal-header">
-            <h2>Order Tracker</h2>
-            <div class="modal-search">
-              <input type="text" placeholder="Search Order..." />
-            </div>
-          </div>
-
-          <!-- Full Orders Table -->
-          <table class="pill-table">
-            <thead>
-              <tr>
-                <th>ORDER ID</th>
-                <th>CLIENT</th>
-                <th>PRODUCTS</th>
-                <th>ORDER DATE</th>
-                <th>STATUS</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>#1001</td>
-                <td>Juan Cruz</td>
-                <td>Sliding Glass Door</td>
-                <td>Aug-09-26</td>
-                <td>
-                  <select class="badge status-select">
-                    <option class="no-status">No status</option>
-                    <option class="badge-cutting">Cutting</option>
-                    <option class="badge-assembly">Assembly</option>
-                    <option class="badge-installing">Installing</option>
-                    <option class="badge-pickup">Pick up</option>
-                    <option class="badge-done">Done</option>
-                  </select>
-                </td>
-              </tr>
-              <tr>
-                <td>#1002</td>
-                <td>Maria Santos</td>
-                <td>Aluminum Frame</td>
-                <td>Aug-09-26</td>
-                <td>
-                  <select class="badge status-select">
-                    <option class="no-status">No status</option>
-                    <option class="badge-cutting">Cutting</option>
-                    <option class="badge-assembly">Assembly</option>
-                    <option class="badge-installing">Installing</option>
-                    <option class="badge-pickup">Pick up</option>
-                    <option class="badge-done">Done</option>
-                  </select>
-                </td>
-              </tr>
-              <tr>
-                <td>#1003</td>
-                <td>Pedro Penduko</td>
-                <td>Tempered Glass</td>
-                <td>Aug-09-26</td>
-                <td>
-                  <select class="badge status-select">
-                    <option class="no-status">No status</option>
-                    <option class="badge-cutting">Cutting</option>
-                    <option class="badge-assembly">Assembly</option>
-                    <option class="badge-installing">Installing</option>
-                    <option class="badge-pickup">Pick up</option>
-                    <option class="badge-done">Done</option>
-                  </select>
-                </td>
-              </tr>
-              <tr>
-                <td>#1004</td>
-                <td>Ana Reyes</td>
-                <td>SD-50 Frame</td>
-                <td>Aug-09-26</td>
-                <td>
-                  <select class="badge status-select">
-                    <option class="no-status">No status</option>
-                    <option class="badge-cutting">Cutting</option>
-                    <option class="badge-assembly">Assembly</option>
-                    <option class="badge-installing">Installing</option>
-                    <option class="badge-pickup">Pick up</option>
-                    <option class="badge-done">Done</option>
-                  </select>
-                </td>
-              </tr>
-              <tr>
-                <td>#1005</td>
-                <td>Erwin Jimenez</td>
-                <td>Dinner Table</td>
-                <td>Aug-09-26</td>
-                <td>
-                  <select class="badge status-select">
-                    <option class="no-status">No status</option>
-                    <option class="badge-cutting">Cutting</option>
-                    <option class="badge-assembly">Assembly</option>
-                    <option class="badge-installing">Installing</option>
-                    <option class="badge-pickup">Pick up</option>
-                    <option class="badge-done">Done</option>
-                  </select>
-                </td>
-              </tr>
-              <tr>
-                <td>#1006</td>
-                <td>Lito Lapid</td>
-                <td>Glass Window</td>
-                <td>Aug-09-26</td>
-                <td>
-                  <select class="badge status-select">
-                    <option class="no-status">No status</option>
-                    <option class="badge-cutting">Cutting</option>
-                    <option class="badge-assembly">Assembly</option>
-                    <option class="badge-installing">Installing</option>
-                    <option class="badge-pickup">Pick up</option>
-                    <option class="badge-done">Done</option>
-                  </select>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
       <!-- Sales Calculator Page -->
       <section id="calculator" class="page-view">
         <div class="calcu-order">
-          <!-- LEFT COLUMN: Calculator + Today's Sale -->
+          <!-- LEFT COLUMN: Calculator + Customer Information -->
           <div class="calc-container">
             <div class="calc-form">
               <div class="calc-header">
@@ -349,9 +228,28 @@
                 Add to Current Order
               </button>
             </div>
-            <div class="todays-sale">
-              <h2>Today's Sale</h2>
-              <p id="todaySale">₱ 0.00</p>
+            <div class="customer-container">
+              <div class="customer-info">
+                <h2>Customer Information</h2>
+                <label>Customer Name</label>
+                <input type="text" id="cust-name" placeholder="Your Name..." />
+
+                <label>Contact number</label>
+                <input type="tel" id="cust-number" placeholder="09xxx" />
+
+                <label>Full Address</label>
+                <input
+                  type="text"
+                  id="cust-address"
+                  placeholder="Your Address..."
+                />
+
+                <label>Due Date</label>
+                <input type="date" id="due-date" />
+              </div>
+              <div class="confirm-button">
+                <button class="confirm-btn" id="saveOrderBtn">Confirm</button>
+              </div>
             </div>
           </div>
 
@@ -403,89 +301,7 @@
                   </div>
                 </div>
               </div>
-              <div>
-                <button class="calculate-btn" id="calcTotalBtn">
-                  Calculate
-                </button>
-                <button class="save-btn" id="PayOrderBtn">Pay Order</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Summary Page -->
-      <section id="summary" class="page-view">
-        <div class="summary-container">
-          <div class="customer-container">
-            <div class="customer-info">
-              <h2>Customer Information</h2>
-              <label>Customer Name</label>
-              <input type="text" id="cust-name" placeholder="Your Name..." />
-
-              <label>Contact number</label>
-              <input type="tel" id="cust-number" placeholder="09xxx" />
-
-              <label>Full Address</label>
-              <input
-                type="text"
-                id="cust-address"
-                placeholder="Your Address..."
-              />
-            </div>
-            <div class="confirm-button">
-              <button class="confirm-btn" id="saveOrderBtn">Save Order</button>
-            </div>
-          </div>
-
-          <div class="current-details">
-            <div class="current-header">
-              <h2 id="summary-title">Current order details</h2>
-              <div class="filter">
-                <input
-                  type="text"
-                  class="item-search"
-                  placeholder="Search Items..."
-                />
-              </div>
-            </div>
-
-            <div class="order-table-scroll">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Description</th>
-                    <th>Dimension</th>
-                    <th>Qty</th>
-                    <th>Price</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody class="order-items-body"></tbody>
-              </table>
-            </div>
-
-            <div class="current-footer">
-              <div class="total-container">
-                <span class="total-span">Total Computation</span>
-                <div class="logo-computation">
-                  <div>
-                    <img
-                      src="assets/philippine-peso.svg"
-                      alt="ph-peso-sign"
-                      class="peso-logo"
-                    />
-                  </div>
-
-                  <div class="h2p-container">
-                    <h2 class="order-total">0.00</h2>
-                    <p class="order-note">
-                      Includes 12% VAT. Valid for 30 days.
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div>
+              <div class="footer-buttons">
                 <button class="print-btn">Print Receipt</button>
                 <button class="save-btn" id="confirmPaymentBtn">
                   Confirm Payment
@@ -494,9 +310,12 @@
             </div>
           </div>
         </div>
+      </section>
 
+      <!-- Summary Page -->
+      <section id="summary" class="page-view">
         <div class="unpaid-orders">
-          <h2>Unpaid Orders</h2>
+          <h2>Orders Section</h2>
           <div class="order-search">
             <input
               type="text"
@@ -510,11 +329,10 @@
               <thead>
                 <tr>
                   <th><span class="th-cell"></span></th>
-                  <th><span class="th-cell">Name</span></th>
                   <th><span class="th-cell">Order ID</span></th>
-                  <th><span class="th-cell">Remaining Balance</span></th>
-                  <th><span class="th-cell">Products</span></th>
+                  <th><span class="th-cell">Name</span></th>
                   <th><span class="th-cell">Order Date</span></th>
+                  <th><span class="th-cell">Status</span></th>
                   <th><span class="th-cell"></span></th>
                 </tr>
               </thead>
@@ -522,57 +340,99 @@
             </table>
           </div>
         </div>
+      </section>
 
-        <!-- Receipt Modal -->
-        <div id="receiptModal" class="modal-overlay">
-          <div class="receipt-modal-container">
-            <div class="receipt-card">
-              <div class="receipt-header">
-                <div class="receipt-logo"><span>ALA</span></div>
-                <h3>ALA Glass & Aluminum</h3>
-                <p>San Rafael, Bulacan</p>
-              </div>
-
-              <div class="receipt-info">
-                <div class="info-row">
-                  <span>Order ID</span><span id="receipt-order-id">#000</span>
-                </div>
-                <div class="info-row">
-                  <span>Date</span><span id="receipt-date">00/00/0000</span>
-                </div>
-                <div class="info-row">
-                  <span>Customer</span><span id="receipt-customer">Name</span>
-                </div>
-              </div>
-
-              <div class="receipt-items-lines" id="receipt-items"></div>
-
-              <div class="receipt-summary">
-                <div class="summary-row">
-                  <span>Subtotal</span><span id="receipt-subtotal">₱ 0.00</span>
-                </div>
-                <div class="summary-row">
-                  <span>VAT (12%)</span><span id="receipt-vat">₱ 0.00</span>
-                </div>
-                <div class="summary-row total-row">
-                  <span>Total</span><span id="receipt-total">₱ 0.00</span>
-                </div>
-              </div>
-
-              <p class="receipt-footer-text">Thank you for your order!</p>
+      <!-- Receipt Modal -->
+      <div id="receiptModal" class="modal-overlay">
+        <div class="receipt-modal-container">
+          <div class="receipt-card">
+            <div class="receipt-header">
+              <div class="receipt-logo"><span>ALA</span></div>
+              <h3>ALA Glass & Aluminum</h3>
+              <p>San Rafael, Bulacan</p>
             </div>
 
-            <div class="receipt-actions">
-              <button id="closeReceiptBtn" class="btn-back">
-                ← Back to Order
-              </button>
-              <button id="confirmPrintBtn" class="btn-print">
-                Print Receipt
-              </button>
+            <div class="receipt-info">
+              <div class="info-row">
+                <span>Order ID</span><span id="receipt-order-id">#000</span>
+              </div>
+              <div class="info-row">
+                <span>Date</span><span id="receipt-date">00/00/0000</span>
+              </div>
+              <div class="info-row">
+                <span>Customer</span><span id="receipt-customer">Name</span>
+              </div>
             </div>
+
+            <div class="receipt-items-lines" id="receipt-items"></div>
+
+            <div class="receipt-summary">
+              <div class="summary-row">
+                <span>Subtotal</span><span id="receipt-subtotal">₱ 0.00</span>
+              </div>
+              <div class="summary-row">
+                <span>VAT (12%)</span><span id="receipt-vat">₱ 0.00</span>
+              </div>
+              <div class="summary-row total-row">
+                <span>Total</span><span id="receipt-total">₱ 0.00</span>
+              </div>
+            </div>
+
+            <p class="receipt-footer-text">Thank you for your order!</p>
+          </div>
+
+          <div class="receipt-actions">
+            <button id="closeReceiptBtn" class="btn-back">
+              ← Back to Order
+            </button>
+            <button id="confirmPrintBtn" class="btn-print">
+              Print Receipt
+            </button>
           </div>
         </div>
-      </section>
+      </div>
+
+      <!-- Order Details Popup (opened by the "view" button) -->
+      <div id="orderDetailModal" class="modal-overlay">
+        <div class="od-card">
+          <button id="closeOrderDetailBtn" class="od-close" aria-label="Close">
+            &times;
+          </button>
+
+          <div class="od-head">
+            <h2 id="od-id">Order ID:</h2>
+            <div class="od-dates">
+              <span id="od-date">Order Date:</span>
+              <span id="od-due" class="od-due">Order Due:</span>
+            </div>
+          </div>
+
+          <div class="od-body">
+            <div class="od-field">
+              <span>Name:</span><strong id="od-name"></strong>
+            </div>
+            <div class="od-field">
+              <span>Contact No.:</span><strong id="od-contact"></strong>
+            </div>
+            <div class="od-field">
+              <span>Address:</span><strong id="od-address"></strong>
+            </div>
+
+            <div class="od-details">
+              <div class="od-details-head">
+                <span>Order Details</span>
+                <span>Total: <span id="od-total">₱ 0.00</span></span>
+              </div>
+              <div class="od-items" id="od-items"></div>
+            </div>
+          </div>
+
+          <div class="od-foot">
+            <span id="od-state" class="od-state"></span>
+            <button id="odPayBtn" class="od-pay">Pay / Edit Order</button>
+          </div>
+        </div>
+      </div>
 
       <!-- PRICE MANAGEMENT -->
       <section id="pricing" class="page-view">
