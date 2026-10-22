@@ -578,7 +578,7 @@ body.sidebar-collapsed .sidebar {
   max-width: 800px;
   max-height: 650px;
   overflow-y: auto;
-  margin-top: 200px;
+  margin-top: 150px;
   border-radius: 8px;
   background-color: #f5f8ff;
 }
@@ -777,7 +777,7 @@ body.sidebar-collapsed .sidebar {
   padding: 15px 30px;
   border-radius: 8px;
   margin-top: 90px;
-  margin-bottom: 60px;
+  margin-bottom: 50px;
 }
 
 .customer-container h2 {
@@ -1688,6 +1688,7 @@ th {
 /* ---- Sales Calculator layout (matches the new design) ---- */
 .calcu-order {
   align-items: flex-start;
+  padding-bottom: 60px; /* space below the Customer Information card */
 }
 
 .calc-form {
@@ -1726,25 +1727,29 @@ th {
 
 /* put the two columns side by side like the design */
 .calcu-order {
-  flex-wrap: nowrap;
+  flex-wrap: wrap; /* Current Order drops below the calculator when the screen is tight */
   gap: 30px;
   padding: 0 24px;
 }
 
 .current-details {
-  flex: 1;
-  min-width: 0;
+  flex: 1 1 460px; /* never squeeze narrower than 460px, wrap instead */
+  min-width: min(460px, 100%);
 }
 
 .calc-container {
   flex-shrink: 0;
 }
 
-/* small screens: stack the columns */
-@media (max-width: 1150px) {
+/* tight screens: the columns stack, so remove the top offset used for side-by-side */
+@media (max-width: 1300px) {
   .calcu-order {
     flex-wrap: wrap;
     justify-content: center;
+  }
+
+  .current-details {
+    margin-top: 0;
   }
 }
 
