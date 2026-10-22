@@ -28,9 +28,6 @@ function showPage(pageId, event) {
   }
 }
 
-// check the customer boxes; if one is empty, tell the user and focus it
-// today's date as YYYY-MM-DD in the user's LOCAL time
-// (toISOString() uses UTC, which gives yesterday's date in the Philippines before 8 AM)
 function todayString() {
   const d = new Date();
   const m = String(d.getMonth() + 1).padStart(2, "0");
@@ -61,8 +58,6 @@ function customerInfoFilled() {
   const dueBox = document.getElementById("due-date");
   const due = dueBox.value;
   if (due) {
-    // allow an existing order to keep its original (already saved) due date,
-    // otherwise overdue orders could never be paid
     const saved = openOrderId !== null ? findOrder(openOrderId) : null;
     const unchanged = saved && saved.due === due;
 
@@ -89,7 +84,6 @@ document.addEventListener("DOMContentLoaded", () => {
         alert("Add at least one item first.");
         return;
       }
-      // customer info is needed before the receipt can be shown or printed
       if (!customerInfoFilled()) return;
       fillReceipt();
       receiptModal.classList.add("active");
